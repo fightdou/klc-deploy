@@ -1,0 +1,220 @@
+---
+- name: 读取 kubelet.conf 文件 stat 信息
+  stat: 
+    path: /etc/kubernetes/kubelet.conf
+  register: kubelet_conf_stat
+
+- name: openeuler 查看 {{ kube_resolve_file }} 目录是否存在
+  stat: 
+    path: "{{ kube_resolve_file }}"
+  register: resolv_file
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: create resolv.conf 文件
+  shell: echo "nameserver 114.114.114.114" > /etc/resolv.conf
+  when:
+    - ansible_distribution == "openEuler"
+    - not resolv_file.stat.exists
+
+- name: 拉取 master 节点需要拉取的镜像列表
+  shell: kubeadm config images pull --image-repository={{ kube_image_repository }} --kubernetes-version={{ kubernetes_version }}
+
+# 初始化第一个 master 节点
+- include_tasks: master-init.yml
+  when:
+  - not kubelet_conf_stat.stat.exists
+  - inventory_hostname == groups['kube-master'][0]
+
+# 初始化其他 master 节点
+- include_tasks: master-join.yml
+  when:
+  - not kubelet_conf_stat.stat.exists
+  - inventory_hostname != groups['kube-master'][0]
+  - inventory_hostname in (groups['kube-master'] + groups['new-master'])
+
+- name: 创建 cni 相关目录
+  file: 
+    name: /etc/kubernetes/plugins/network-plugin
+    state: directory
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: 创建 harbor register secrets
+  shell: |
+    kubectl create secret docker-registry {{ docker_register_secrets_name }} --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
+    kubectl create secret docker-registry {{ docker_register_secrets_name }} --namespace=kube-system --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  ignore_errors: yes
+  when:
+    - enable_docker_auth | bool
+
+# 配置网络CNI插件
+- name: 渲染 flannel 配置文件
+  template:
+    src: kube-flannel.yaml.j2
+    dest: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Deploy flannel in yaml file
+  kubernetes.core.k8s:
+    src: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
+    namespace: default
+    state: present
+    wait: yes
+    wait_sleep: 5
+    wait_timeout: 300
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+# 配置 metrics-server
+- name: 渲染 metrics-server 配置文件
+  template:
+    src: metrics-server.yaml.j2 
+    dest: /etc/kubernetes/plugins/network-plugin/metrics-server.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Deploy metrics server in yaml file
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/metrics-server.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+# 配置 nodelocaldns
+- name: 渲染 nodelocaldns 配置文件
+  template:
+    src: nodelocaldns.yaml.j2 
+    dest: /etc/kubernetes/plugins/network-plugin/nodelocaldns.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Deploy nodelocaldns in yaml file
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/nodelocaldns.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+# 配置 metallb
+- name: 渲染 metallb 配置文件
+  template:
+    src: metallb-system.yaml.j2 
+    dest: /etc/kubernetes/plugins/network-plugin/metallb-system.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Deploy metallb in yaml file
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/metallb-system.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: 查看 metallb-controller 是否运行
+  shell: kubectl get deployment metallb-controller -n kube-system -o json | jq .status.readyReplicas
+  register: metallb_status
+  until: metallb_status.stdout == "1"
+  ignore_errors: true
+  retries: 10
+  delay: 30
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: 渲染 BGPAdvertisement 配置文件
+  template:
+    src: IPAdvertisement.yaml.j2
+    dest: /etc/kubernetes/plugins/network-plugin/IPAdvertisement.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Deploy IPAdvertisement in yaml file
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/IPAdvertisement.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: 渲染 metallb ipaddress 配置文件
+  template:
+    src: ipaddress_pool.yaml.j2 
+    dest: /etc/kubernetes/plugins/network-plugin/ipaddress_pool.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Deploy ipaddress_pool in yaml file
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/ipaddress_pool.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: 校验 helm 命令是否存在
+  shell: helm version
+  register: helm_version
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  ignore_errors: True
+
+- block:
+  - name: 安装 helm
+    shell: wget https://get.helm.sh/helm-v3.8.1-linux-amd64.tar.gz -P /root
+
+  - name: 解压 helm 包
+    shell: tar -xvf /root/helm-v3.8.1-linux-amd64.tar.gz -C /opt
+
+  - name: 复制 helm 二进制文件
+    copy:
+      src: /opt/linux-amd64/helm
+      dest: /usr/local/bin
+      mode: "0755"
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  when:
+    - helm_version is not success
+
+- name: 查看 k8s 节点 标签
+  shell: kubectl get nodes --show-labels | grep {{ inventory_hostname }} | grep {{ control_node_role_name }} | wc -l
+  register: node_role
+
+- name: group not have control labels node
+  group_by:
+    key: "all_using_limit_control_{{ node_role.stdout == '0' }}"
+
+- name: 设置 control node lables
+  shell: kubectl label node {{ inventory_hostname }} {{ control_node_role_name }}={{ node_role_value }}
+  # with_items: "{{ groups['control'] }}"
+  # run_once: True
+  # delegate_to: "{{ groups['kube-master'][0] }}"
+  when: inventory_hostname in groups['all_using_limit_control_True']
+  ignore_errors: True
+
+- name: 创建定时任务,每天晚上2点清除系统缓存
+  cron:
+    name: "clean linux cache"
+    hour: "2"
+    job: "sync && echo 1 > /proc/sys/vm/drop_caches"
+  when: inventory_hostname in groups["control"]
+
+# 备份etcd
+- block:
+  - name: 第一个 etcd 节点创建 etcd 备份目录
+    file: 
+      name: "{{ etcd_backup_dir }}"
+      state: directory
+
+  - name: 第一个 etcd 节点创建 etcd 备份工具
+    template: 
+      src: etcdtools.j2
+      dest: /usr/local/bin/etcdtools
+      owner: root
+      mode: 0755
+  - name: 第一个 etcd 节点创建 etcd 定时备份 crontab
+    cron: 
+      minute: "0"
+      hour: "{{ etcd_backup_hour }}"
+      name: Backup etcd databases
+      job: >
+        /usr/local/bin/etcdtools backup
+  - name: 第一个 etcd 节点创建清理 etcd 定时备份文件 crontab
+    cron: 
+      minute: "30"
+      hour: "{{ etcd_backup_hour }}"
+      name: Clean etcd databases backup file
+      job: >
+        /usr/local/bin/etcdtools cleanup
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"

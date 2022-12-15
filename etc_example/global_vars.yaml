@@ -1,0 +1,125 @@
+####################
+# Kubernetes options
+####################
+# k8s 集群 VIP 配置
+kube_apiserver_vip: 10.2.36.229
+# k8s 集群域名
+kubernetes_domain_name: kunlun.cluster.local
+# k8s 集群 VIP 端口
+kube_apiserver_port: 6443
+# docker 镜像 namespace
+kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubernetes"
+# docker 镜像 tag
+kube_image_tag: 2.0.0
+kubernetes_version: 1.23.5
+kubelet_cgroup_driver: systemd
+kube_proxy_mode: ipvs
+kube_resolve_file: /etc/resolv.conf
+kubelet_root_dir: "/var/lib/kubelet"
+wait_plugins_ready: false
+docker_storage_dir: "/var/lib/docker"
+kube_pod_subnet: 10.244.0.0/16
+kube_dns_domain: cluster.local
+kube_hostnetwork: true
+flannel_backend: "host-gw"
+kube_priority_name: system-node-critical
+kube_toleration_seconds: 30
+# Pod根容器
+pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
+kubeadm_token: ceky52.rec2keii98oke7sl
+# 节点的角色名称，默认values为enabled
+control_node_role_name: control_role
+compute_node_role_name: compute_role
+storage_node_role_name: storage_role
+node_role_value: enabled
+docker_image_path : /opt/offline/kunlunyun-2.0.0.tar.gz
+docker_dpkg_path: /opt/offline/deb-packages
+
+##############
+# Helm options
+##############
+helm_install_namespace: default
+helm_charts_dir: /opt/helm-charts
+helm_wait_timeout: 600s
+
+
+
+#####################
+# Kubernetes options
+#####################
+---
+# Use proxycommand if bastion host is in group all
+# This change obseletes editing ansible.cfg file depending on bastion existance
+ansible_ssh_common_args: "{% if 'bastion' in groups['all'] %} -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -W %h:%p {{ hostvars['bastion']['ansible_user'] }}@{{ hostvars['bastion']['ansible_host'] }} {% if ansible_ssh_private_key_file is defined %}-i {{ ansible_ssh_private_key_file }}{% endif %} ' {% endif %}"
+
+# Limits for KubeSphere components
+ks_apiserver_memory_limit: 1024Mi
+ks_apiserver_cpu_limit: "1"
+ks_apiserver_memory_requests: 100Mi
+ks_apiserver_cpu_requests: 20m
+ks_console_memory_limit: 512Mi
+ks_console_cpu_limit: "1"
+ks_console_memory_requests: 100Mi
+ks_console_cpu_requests: 20m
+
+# Ip address of the Kubernetes skydns service
+skydns_server: "{{ kube_service_addresses|ipaddr('net')|ipaddr(3)|ipaddr('address') }}"
+skydns_server_secondary: "{{ kube_service_addresses|ipaddr('net')|ipaddr(4)|ipaddr('address') }}"
+dnsmasq_dns_server: "{{ kube_service_addresses|ipaddr('net')|ipaddr(2)|ipaddr('address') }}"
+dns_domain: "{{ cluster_name }}"
+kube_dns_servers:
+  kubedns: ["{{skydns_server}}"]
+  coredns: ["{{skydns_server}}"]
+  coredns_dual: "{{[skydns_server] + [ skydns_server_secondary ]}}"
+  manual: ["{{manual_dns_server}}"]
+  dnsmasq_kubedns: ["{{dnsmasq_dns_server}}"]
+
+dns_servers: "{{kube_dns_servers[dns_mode]}}"
+
+kubesphere_dir: /kubesphere/kubesphere
+kube_config_dir: /etc/kubernetes
+kube_cert_dir: "{{ kube_config_dir }}/ssl"
+kube_addons_dir: "{{ kube_config_dir }}/addons"
+# Directory where the binaries will be installed
+bin_dir: /usr/local/bin
+docker_bin_dir: /usr/bin
+etcd_data_dir: /var/lib/etcd
+
+# Random shifts for retrying failed ops like pushing/downloading
+retry_stagger: 5
+
+# Vars for pointing to Kubernetes api endpoints
+first_kube_master: "{{ hostvars[groups['kube-master'][0]]['access_ip'] | default(hostvars[groups['kube-master'][0]]['ip'] | default(hostvars[groups['kube-master'][0]]['ansible_default_ipv4']['address'])) }}"
+loadbalancer_apiserver_localhost: "{{ loadbalancer_apiserver is not defined }}"
+# applied if only external loadbalancer_apiserver is defined, otherwise ignored
+apiserver_loadbalancer_domain_name: "lb.kubesphere.local"
+kube_apiserver_port: 6443
+kube_apiserver_host: |-
+  {% if loadbalancer_apiserver is defined and loadbalancer_apiserver.port is defined -%}
+       https://{{ loadbalancer_apiserver.address }}:{{ loadbalancer_apiserver.port|default(kube_apiserver_port) }}
+  {%- else -%}
+       https://{{ first_kube_master }}:{{ kube_apiserver_port }}
+  {%- endif %}
+
+elk_prefix: logstash
+
+vertical_pod_autoscaler_enable: false
+
+#istio_enable: true
+#
+#metrics_server_enable: true
+#
+#openpitrix_enable: true
+#
+#logging_enable: true
+#monitoring_enable: true
+#notification_enable: true
+#alerting_enable: true
+#
+## devops
+#sonarqube_enable: true
+#devops_enable: true
+#s2i_enable: true
+#jenkins_enable: true
+#harbor_enable: false
+#gitlab_enable: false

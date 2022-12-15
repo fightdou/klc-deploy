@@ -1,0 +1,106 @@
+---
+- import_playbook: gather-facts.yml
+
+- name: Apply role baremetal
+  gather_facts: false
+  hosts: baremetal
+  roles:
+    - { role: baremetal,
+        tags: baremetal,
+        when: enable_baremetal| bool }
+
+- name: Apply role kube-master
+  gather_facts: false
+  hosts: 
+    - kube-master
+    - new-master
+  roles:
+    - { role: kube-master,
+        tags: kube-master,
+        when: enable_kube_master| bool }
+
+- name: Apply role kube-worker
+  gather_facts: false
+  hosts: 
+    - kube-worker
+    - new-worker
+  roles:
+    - { role: kube-worker,
+        tags: kube-worker,
+        when: enable_kube_worker| bool }
+
+- name: Apply role ceph-csi
+  gather_facts: false
+  hosts: 
+    - ceph-csi
+    - ceph-csi-cephfs
+    - ceph-csi-rbd
+  roles:
+    - { role: csi,
+        tags: csi,
+        when: enable_ceph| bool }
+
+- name: Apply role ceph-csi
+  gather_facts: false
+  hosts: 
+    - ceph-csi
+    - ceph-csi-cephfs
+    - ceph-csi-rbd
+  roles:
+    - { role: csi,
+        tags: csi,
+        when: enable_ceph| bool }
+
+- name: Apply role preinstall
+  gather_facts: false
+  hosts: 
+    - preinstall
+  roles:
+    - { role: preinstall,
+        tags: preinstall,
+        when: enable_preinstall| bool }
+
+- name: Apply role common
+  gather_facts: false
+  hosts: 
+    - common
+  roles:
+    - { role: common,
+        tags: common,
+        when: enable_common| bool }
+
+- name: Apply role ks-core
+  gather_facts: false
+  hosts: 
+    - ks-core
+  roles:
+    - { role: ks-core,
+        tags: ks-core,
+        when: enable_kubesphere | bool }
+
+- name: Apply role ks-monitor
+  gather_facts: false
+  hosts: 
+    - ks-monitor
+  roles:
+    - { role: ks-monitor,
+        tags: ks-monitor,
+        when: enable_monitor| bool }
+
+- name: Apply role openpitrix
+  gather_facts: false
+  hosts: 
+    - openpitrix
+  roles:
+    - { role: openpitrix,
+        tags: openpitrix,
+        when: enable_openpitrix| bool }
+
+- name: Apply role ks-multicluster
+  gather_facts: false
+  hosts: 
+    - ks-multicluster
+  roles:
+    - { role: ks-multicluster,
+        tags: ks-multicluster,
+        when: enable_multicluster| bool }

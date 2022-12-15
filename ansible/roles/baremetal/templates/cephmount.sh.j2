@@ -1,0 +1,32 @@
+#!/bin/bash
+a=1
+mount_state="mountpoint -q {{ desktop_mount_dir }}"
+if $mount_state;then
+    echo "{{ desktop_mount_dir }} 已挂载" >> /var/log/cephmount.log
+    exit 1
+fi
+while true
+do
+    ceph_active=`ceph fs status | grep active | wc -l`
+    if [ "$ceph_active" -ne 0 ]
+    then
+        sleep 5
+        {% if ansible_distribution == 'Ubuntu' %}
+        ceph-fuse -m {{ mon_hosts }} {{ desktop_mount_dir }}
+        {% elif ansible_distribution == 'openEuler' %}
+        mount -t ceph {{ mon_hosts }}:/ {{ desktop_mount_dir }} -o name=admin,secret={{ mons_secret.client_admin.client_admin_secret }},_netdev,noatime
+        {% endif %}
+        mountpoint -q {{ desktop_mount_dir }}
+        echo "$(date +"%Y-%m-%d %T") ==> 查看 {{ desktop_mount_dir }} 是否是一个挂载点,结果 $?" >> /var/log/cephmount.log
+        if [ $? -eq 0 ]
+        then
+            echo "$(date +"%Y-%m-%d %T")==>第$a次尝试挂载:成功" >> /var/log/cephmount.log
+            sleep 10
+            break
+        fi
+    else
+        echo "$(date +"%Y-%m-%d %T")==>第$a次ceph fs 检测未active" >> /var/log/cephmount.log
+        let a=a+1
+        sleep 10
+    fi
+done

@@ -1,0 +1,222 @@
+---
+- name: Update apt cache
+  shell: apt update -y
+  register: apt_result
+  until: apt_result.rc == 0
+  retries: 12
+  delay: 5
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: 创建 /etc/kubernetes 目录
+  file: 
+    name: "/etc/kubernetes"
+    state: directory
+
+- name: 查看 docker 是否安装
+  shell: docker info
+  register: docker_install_info
+  ignore_errors: true
+
+- name: 查看 kubeadm 是否安装
+  shell: kubeadm version
+  register: kubeadm_install_info
+  ignore_errors: true
+
+- name: remove apparmor
+  apt:
+    state: absent
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - apparmor
+      - ufw
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: Ubuntu Install some package
+  apt:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - python3-pip
+      - git
+      - rsync
+      - python3-virtualenv
+      - iptables
+      - sg3-utils-udev
+      - ntp
+      - jq
+      - ipvsadm
+      - ipmitool
+      - ceph-fuse
+      - arping
+      - traceroute
+      - net-tools
+      - iputils-ping
+      - telnet
+      - ethtool
+      - tcpdump
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: Openeuler Install some package
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - python3-pip
+      - git
+      - rsync
+      - iptables
+      - ntp
+      - jq
+      - ipvsadm
+      - ipmitool
+      - ceph-fuse
+      - traceroute
+      - net-tools
+      - iputils
+      - telnet
+      - ethtool
+      - tcpdump
+      - bash-completion
+      - bridge-utils
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: Ubuntu 安装 docker
+  apt:
+    name: 
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    state: present
+  when:
+    - docker_install_info is not success
+    - ansible_distribution == "Ubuntu"
+
+- name: openEuler 安装 docker
+  yum:
+    name: "{{ packages}}"
+    state: present
+  vars:
+    packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+  when:
+    - docker_install_info is not success
+    - ansible_distribution == "openEuler"
+
+- name: 创建 /etc/docker 目录
+  become: true
+  file:
+    path: /etc/docker
+    state: directory
+    mode: 0755
+
+- name: 确认 Docker 配置是否有修改
+  template:
+    src: docker-daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    mode: 0644
+  register: configuration_result
+
+- name: 重新加载 daemon
+  systemd:
+    daemon_reload: yes
+
+- name: 启动/重启 Docker
+  service:
+    name: docker
+    state: restarted
+    enabled: yes
+  when: 
+  - configuration_result.changed
+  
+- name: 设置 Docker 开机自启
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Ubuntu 安装 kubeadm kubelet kubectl
+  apt: 
+    name:
+    - "kubectl=1.23.5-00"
+    - "kubelet=1.23.5-00"
+    - "kubeadm=1.23.5-00"
+    state: present
+  when:
+    - kubeadm_install_info is not success
+    - ansible_distribution == "Ubuntu"
+
+- name: openEuler 安装 kubeadm kubelet kubectl
+  yum: 
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - "kubelet-1.23.5-0"
+      - "kubeadm-1.23.5-0"
+      - "kubectl-1.23.5-0"
+  when:
+    - kubeadm_install_info is not success
+    - ansible_distribution == "openEuler"
+
+- name: Ubuntu 安装 etcdctl 工具
+  apt:
+    name:
+    - etcd-client
+    state: present
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: openEuler 安装 etcd 工具
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - etcd
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: Ubuntu 配置 kubectl 命令行自动补全
+  shell: kubectl completion bash > /usr/share/bash-completion/completions/kubectl
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: Openeuler 配置 kubectl 命令行自动补全
+  shell: echo "source <(kubectl completion bash)" >> ~/.bashrc
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: Docker Login
+  docker_login:
+    registry: "{{ docker_register_address }}"
+    username: "{{ harbor_username }}"
+    debug: true
+    password: "{{ harbor_password }}"
+  when:
+    - enable_docker_auth | bool
+
+- name: openEuler 设置防火墙规则
+  shell: iptables -P FORWARD ACCEPT
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: Disable system swap partition table
+  shell: "swapoff -a && sysctl -w vm.swappiness=0"
+  ignore_errors: true
+
+- name: Delete fstab swap config
+  lineinfile:
+    path: /etc/fstab
+    regexp: 'swap'
+    state: absent
+    backup: yes
