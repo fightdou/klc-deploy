@@ -41,18 +41,3 @@ monitoring:
       memory: 30Mi
   grafana:
     enable: false
-
-etcd.endpointIps: |-
-  {% for item in groups['etcd'] -%}
-    {{ hostvars[item]['access_ip'] | default(hostvars[item]['ip'] | default(hostvars[item]['ansible_default_ipv4']['address'])) }}{% if not loop.last %},{% endif %}
-  {%- endfor %}
-
-etcd.port: 2379
-etcd.tlsEnable: true
-
-#etcd_config_dir: /etc/ssl/etcd
-#etcd_cert_dir: "{{ etcd_config_dir }}/ssl"
-#etcd_client_ca_crt: "{{ etcd_cert_dir }}/ca.pem"
-#etcd_client_crt: "{{ etcd_cert_dir }}/node-{{ inventory_hostname }}.pem"
-#etcd_client_key: "{{ etcd_cert_dir }}/node-{{ inventory_hostname }}-key.pem"
-

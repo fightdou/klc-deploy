@@ -7,7 +7,7 @@ metadata:
     component: openpitrix-import-job
     version: v3.2.0
   name: openpitrix-import-job
-  namespace: klc-system
+  namespace: {{ helm_install_namespace }}
 spec:
   backoffLimit: 100
   template:
@@ -17,24 +17,24 @@ spec:
         component: openpitrix-import-job
         version: v3.2.0
     spec:
-      serviceAccountName: kubesphere
+      serviceAccountName: klc
       restartPolicy: OnFailure
       initContainers:
         - name: wait-apiserver
-          image: {{ openpitrix_job_repo }}:{{ openpitrix_job_tag }}
+          image: {{ kube_image_repository }}/openpitrix-jobs:{{ kube_image_tag }}
           imagePullPolicy: IfNotPresent
-          command: ['sh', '-c', 'until nc -z ks-apiserver.klc-system.svc 80; do echo "waiting for apiserver"; sleep 2; done;']
+          command: ['sh', '-c', 'until nc -z ks-apiserver.{{ helm_install_namespace }}.svc 80; do echo "waiting for apiserver"; sleep 2; done;']
       containers:
         - name: import
           command:
             - import-app
             - import
-          image: {{ openpitrix_job_repo }}:{{ openpitrix_job_tag }}
+          image: {{ kube_image_repository }}/openpitrix-jobs:{{ kube_image_tag }}
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: /etc/kubesphere
-              name: kubesphere-config
+              name: klc-config
       volumes:
-        - name: kubesphere-config
+        - name: klc-config
           configMap:
-            name: kubesphere-config
+            name: klc-config

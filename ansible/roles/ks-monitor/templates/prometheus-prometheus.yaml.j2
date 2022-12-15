@@ -6,9 +6,8 @@ metadata:
     app.kubernetes.io/instance: k8s
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: {{ prometheus_tag | replace("v", "") }}
   name: k8s
-  namespace: klc-monitoring-system
+  namespace: {{ helm_install_namespace }}
 spec:
 {% if monitoring.affinity is defined and monitoring.affinity is not none %}
   affinity:
@@ -35,24 +34,23 @@ spec:
               app.kubernetes.io/name: prometheus
               app.kubernetes.io/part-of: kube-prometheus
           namespaces:
-          - klc-monitoring-system
+          - {{ helm_install_namespace }}
           topologyKey: kubernetes.io/hostname
         weight: 100
 {% endif %}
   alerting:
     alertmanagers:
     - name: alertmanager-main
-      namespace: klc-monitoring-system
+      namespace: {{ helm_install_namespace }}
       port: web
   evaluationInterval: 1m
-  image: {{ prometheus_repo }}:{{ prometheus_tag }}
+  image: {{ kube_image_repository }}/prometheus:{{ kube_image_tag }}
   podMetadata:
     labels:
       app.kubernetes.io/component: prometheus
       app.kubernetes.io/instance: k8s
       app.kubernetes.io/name: prometheus
       app.kubernetes.io/part-of: kube-prometheus
-      app.kubernetes.io/version: {{ prometheus_tag | replace("v", "") }}
 {% if monitoring.nodeSelector is defined and monitoring.nodeSelector is not none %}
   nodeSelector:
     {{ monitoring.nodeSelector | to_nice_yaml(indent=2) | indent(4) }}

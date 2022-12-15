@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json": "file:///c%3A/99-doudou/klc-deploy/ansible/roles/ks-monitor/tasks/prometheus.yaml"
+    }
+}

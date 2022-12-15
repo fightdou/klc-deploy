@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/part-of: kube-prometheus
     app.kubernetes.io/version: {{ alertmanager_tag | replace("v", "") }}
   name: main
-  namespace: klc-monitoring-system
+  namespace: {{ helm_install_namespace }}
 spec:
 {% if monitoring.affinity is defined and monitoring.affinity is not none %}
   affinity:
@@ -28,7 +28,7 @@ spec:
               values:
               - main
           namespaces:
-          - klc-monitoring-system
+          - {{ helm_install_namespace }}
           topologyKey: kubernetes.io/hostname
         weight: 100
 {% endif %}

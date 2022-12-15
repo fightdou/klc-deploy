@@ -1,4 +1,3 @@
 ---
 - name: Monitoring | Installing node-exporter
-  shell: >
-    {{ bin_dir }}/kubectl apply -f {{ kubesphere_dir }}/prometheus/node-exporter --force
+  shell: kubectl apply -f {{ helm_charts_dir }}/prometheus/node-exporter --force

@@ -10,8 +10,8 @@ operator:
   containers:
     proxy:
       image:
-        repo: {{ notification_manager_operator_proxy_repo }}
-        tag: {{ notification_manager_operator_proxy_tag }}
+        repo: {{ kube_image_repository }}/kube-rbac-proxy
+        tag: {{ kube_image_tag }}
         pullPolicy: IfNotPresent
       resources:
         limits:
@@ -22,8 +22,8 @@ operator:
           memory: {{ monitoring.notification_manager.proxy.resources.requests.memory | default("10Mi") }}
     operator:
       image:
-        repo: {{ notification_manager_operator_repo }}
-        tag: {{ notification_manager_operator_tag }}
+        repo: {{ kube_image_repository }}/notification-manager-operator
+        tag: {{ kube_image_tag }}
         pullPolicy: IfNotPresent 
       resources:
         limits:
@@ -65,8 +65,8 @@ operator:
 notificationmanager:
   name: notification-manager
   image:
-    repo: {{ notification_manager_repo }}
-    tag: {{ notification_manager_tag }}
+    repo: {{ kube_image_repository  }}/notification-manager
+    tag: {{ kube_image_tag }}
     pullPolicy: IfNotPresent
 {% if nodeNum is defined and nodeNum < 3 %}
   replicas: 1
@@ -150,5 +150,3 @@ notificationmanager:
     - mountPath: /etc/localtime
       name: host-time
       readOnly: true
-
-

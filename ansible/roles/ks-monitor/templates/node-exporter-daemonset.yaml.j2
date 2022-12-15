@@ -5,9 +5,9 @@ metadata:
     app.kubernetes.io/component: exporter
     app.kubernetes.io/name: node-exporter
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: {{ node_exporter_tag | replace("v", "") }}
+    app.kubernetes.io/version: {{ node_exporter_tag }}
   name: node-exporter
-  namespace: klc-monitoring-system
+  namespace: {{ helm_install_namespace }}
 spec:
   selector:
     matchLabels:
@@ -20,7 +20,7 @@ spec:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: node-exporter
         app.kubernetes.io/part-of: kube-prometheus
-        app.kubernetes.io/version: {{ node_exporter_tag | replace("v", "") }}
+        app.kubernetes.io/version: {{ node_exporter_tag }}
     spec:
       affinity:
         nodeAffinity:
@@ -39,7 +39,7 @@ spec:
         - --no-collector.hwmon
         - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)
         - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
-        image: {{ node_exporter_repo }}:{{ node_exporter_tag }}
+        image: {{ kube_image_repository }}/node-exporter:{{ kube_image_tag }}
         name: node-exporter
         resources:
           limits:

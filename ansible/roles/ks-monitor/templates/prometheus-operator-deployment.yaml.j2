@@ -5,9 +5,8 @@ metadata:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: {{ prometheus_operator_tag | replace("v", "") }}
   name: prometheus-operator
-  namespace: klc-monitoring-system
+  namespace: {{ helm_install_namespace }}
 spec:
   replicas: 1
   selector:
@@ -28,8 +27,8 @@ spec:
       containers:
       - args:
         - --kubelet-service=kube-system/kubelet
-        - --prometheus-config-reloader={{ prometheus_config_reloader_repo }}:{{ prometheus_config_reloader_tag }}
-        image: {{ prometheus_operator_repo }}:{{ prometheus_operator_tag }}
+        - --prometheus-config-reloader={{ kube_image_repository }}/prometheus-config-reloader:{{ kube_image_tag }}
+        image: {{ kube_image_repository }}/prometheus-operator:{{ kube_image_tag }}
         name: prometheus-operator
         ports:
         - containerPort: 8080
@@ -48,7 +47,7 @@ spec:
         - --secure-listen-address=:8443
         - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
         - --upstream=http://127.0.0.1:8080/
-        image: {{ kube_rbac_proxy_repo }}:{{ kube_rbac_proxy_tag }}
+        image: {{ kube_image_repository }}/kube-rbac-proxy:{{ kube_image_tag }}
         name: kube-rbac-proxy
         resources:
           limits:

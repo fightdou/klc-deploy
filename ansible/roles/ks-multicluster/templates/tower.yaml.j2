@@ -5,7 +5,7 @@ metadata:
     app: tower
     app.kubernetes.io/name: tower
   name: tower
-  namespace: klc-system
+  namespace: {{ helm_install_namespace }}
 spec:
   replicas: 1
   selector:
@@ -30,7 +30,7 @@ spec:
             - --ca-key=/ca.key
             - --v=4
             - --leader-elect=true
-          image: {{ tower_repo }}/{{ tower_image }}:{{ tower_image_tag }}
+          image: {{ kube_image_repository }}/tower:{{ kube_image_tag }}
           imagePullPolicy: IfNotPresent
           name: tower
           readinessProbe:
@@ -50,43 +50,15 @@ spec:
             limits:
               memory: 256Mi
               cpu: 500m
-      serviceAccountName: kubesphere
-{% if multicluster.affinity is defined and multicluster.affinity is not none %}
-      affinity:
-        {{ multicluster.affinity | to_nice_yaml(indent=2) | indent(8) }}
-{% elif affinity is defined and affinity is not none %}
-      affinity:
-        {{ affinity | to_nice_yaml(indent=2) | indent(8) }}
-{% else %}
-      affinity: {}
-{% endif %}
-{% if multicluster.nodeSelector is defined and multicluster.nodeSelector is not none %}
-      nodeSelector:
-        {{ multicluster.nodeSelector | to_nice_yaml(indent=2) | indent(8) }}
-{% elif nodeSelector is defined and nodeSelector is not none %}
-      nodeSelector:
-        {{ nodeSelector | to_nice_yaml(indent=2) | indent(8) }}
-{% else %}
-      nodeSelector: {}
-{% endif %}
-{% if multicluster.tolerations is defined and multicluster.tolerations is not none %}
-      tolerations:
-        {{ multicluster.tolerations | to_nice_yaml(indent=2) | indent(8) }}
-{% elif tolerations is defined and tolerations is not none %}
-      tolerations:
-        {{ tolerations | to_nice_yaml(indent=2) | indent(8) }}
-{% else %}
-      tolerations: []
-{% endif %}
+      serviceAccountName: klc
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app: tower
   name: tower
-  namespace: klc-system
+  namespace: {{ helm_install_namespace }}
 spec:
   externalTrafficPolicy: Cluster
   ports:
@@ -96,4 +68,4 @@ spec:
   selector:
     app: tower
   sessionAffinity: None
-  type: LoadBalancer
+  type: ClusterIP

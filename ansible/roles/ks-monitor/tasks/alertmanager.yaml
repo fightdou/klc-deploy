@@ -1,4 +1,3 @@
 ---
 - name: Monitoring | Installing alertmanager
-  shell: >
-    {{ bin_dir }}/kubectl apply -f {{ kubesphere_dir }}/prometheus/alertmanager
+  shell: kubectl apply -f {{ helm_charts_dir }}/prometheus/alertmanager

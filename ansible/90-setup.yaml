@@ -51,15 +51,6 @@
         tags: csi,
         when: enable_ceph| bool }
 
-- name: Apply role preinstall
-  gather_facts: false
-  hosts: 
-    - preinstall
-  roles:
-    - { role: preinstall,
-        tags: preinstall,
-        when: enable_preinstall| bool }
-
 - name: Apply role common
   gather_facts: false
   hosts: 

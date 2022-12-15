@@ -35,19 +35,15 @@ controllermanager:
 
   controller:
     annotations: {}
-{% if nodeNum is defined and nodeNum < 3 %}
     replicaCount: 1
-{% else %}
-    replicaCount: 2
-{% endif %}
-    repository: {{ kubefed_repo }}
-    image: {{ kubefed_image }}
-    tag: {{ kubefed_image_tag }}
+    repository: {{ kube_image_repository }}
+    image: kubefed
+    tag: {{ kube_image_tag }}
   postInstallJob:
-    repository: {{ post_install_job_repo }}
-    image: {{ post_install_job_image }}
-    tag: {{ ks_kubectl_tag }}
+    repository: {{ kube_image_repository }}
+    image: kubectl
+    tag: {{ kube_image_tag }}
   webhook:
-    repository: {{ kubefed_repo }}
-    image: {{ kubefed_image }}
-    tag: {{ kubefed_image_tag }}
+    repository: {{ kube_image_repository }}
+    image: kubefed
+    tag: {{ kube_image_tag }}

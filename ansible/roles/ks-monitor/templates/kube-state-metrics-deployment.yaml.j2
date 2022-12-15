@@ -5,9 +5,8 @@ metadata:
     app.kubernetes.io/component: exporter
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: {{ kube_state_metrics_tag | replace("v", "") }}
   name: kube-state-metrics
-  namespace: klc-monitoring-system
+  namespace: {{ helm_install_namespace }}
 spec:
   replicas: 1
   selector:
@@ -21,7 +20,6 @@ spec:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: kube-state-metrics
         app.kubernetes.io/part-of: kube-prometheus
-        app.kubernetes.io/version: {{ kube_state_metrics_tag | replace("v", "") }}
     spec:
       volumes:
       - name: host-time
@@ -36,7 +34,7 @@ spec:
         - --telemetry-port=8082
         - --metric-denylist=kube_.+_version,kube_.+_created,kube_deployment_(spec_paused|spec_strategy_rollingupdate_.+),kube_endpoint_(info|address_.+),kube_job_(info|owner|spec_(parallelism|active_deadline_seconds)|status_(active|.+_time)),kube_cronjob_(info|status_.+|spec_.+),kube_namespace_(status_phase),kube_persistentvolume_(info|capacity_.+),kube_persistentvolumeclaim_(resource_.+|access_.+),kube_secret_(type),kube_service_(spec_.+|status_.+),kube_ingress_(info|path|tls),kube_replicaset_(status_.+|spec_.+|owner),kube_poddisruptionbudget_status_.+,kube_replicationcontroller_.+,kube_node_info,kube_(hpa|replicaset|replicationcontroller)_.+_generation
         - --metric-labels-allowlist=namespaces=[kubesphere.io/workspace]
-        image: {{ kube_state_metrics_repo }}:{{ kube_state_metrics_tag }}
+        image: {{ kube_image_repository }}/kube-state-metrics:{{ kube_image_tag }}
         name: kube-state-metrics
         resources:
           limits:
@@ -56,7 +54,7 @@ spec:
         - --secure-listen-address=:8443
         - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
         - --upstream=http://127.0.0.1:8081/
-        image: {{ kube_rbac_proxy_repo }}:{{ kube_rbac_proxy_tag }}
+        image: {{ kube_image_repository }}/kube-rbac-proxy:{{ kube_image_tag }}
         name: kube-rbac-proxy-main
         resources:
           limits:
@@ -77,7 +75,7 @@ spec:
         - --secure-listen-address=:9443
         - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
         - --upstream=http://127.0.0.1:8082/
-        image: {{ kube_rbac_proxy_repo }}:{{ kube_rbac_proxy_tag }}
+        image: {{ kube_image_repository }}/kube-rbac-proxy:{{ kube_image_tag }}
         name: kube-rbac-proxy-self
         resources:
           limits:

@@ -42,6 +42,10 @@ helm_install_namespace: default
 helm_charts_dir: /opt/helm-charts
 helm_wait_timeout: 600s
 
+####################
+# openpitrix options
+####################
+harbor_chart_url: 
 
 
 #####################
