@@ -2,8 +2,8 @@
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
 ##
 image:
-  repository: {{ redis_repo }}
-  tag: {{ redis_tag }}
+  repository: {{ kube_image_repository }}/redis
+  tag: {{ kube_image_tag }}
   pullPolicy: IfNotPresent
 ## replicas number for each component
 replicas: 3
@@ -36,8 +36,8 @@ haproxy:
   replicas: 3
 
   image:
-    repository: {{ haproxy_repo }}
-    tag: {{ haproxy_tag }}
+    repository: {{ kube_image_repository }}/haproxy
+    tag: {{ kube_image_tag }}
     pullPolicy: IfNotPresent
   annotations: {}
   resources: {}

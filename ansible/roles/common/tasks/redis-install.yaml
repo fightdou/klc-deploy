@@ -5,7 +5,7 @@
         redis_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
     - name: KubeSphere | Creating Redis Password Secret
       shell: >
-        {{ bin_dir }}/kubectl -n default create secret generic redis-secret --from-literal=auth={{redis_password}}
+        kubectl -n default create secret generic redis-secret --from-literal=auth={{redis_password}}
       register: secret
       failed_when: "secret.stderr and 'already exists' not in secret.stderr"
 
@@ -30,42 +30,26 @@
 
     - name: KubeSphere | Checking old redis status
       shell: >
-        {{ bin_dir }}/kubectl get pod -n default  -l app=redis,tier=database,version=redis-4.0 | wc -l
+        kubectl get pod -n default  -l app=redis,tier=database,version=redis-4.0 | wc -l
       register: old_redis_exist
 
 
     - name: KubeSphere | Deleting and backup old redis svc
       shell: >
-        {{ bin_dir }}/kubectl get svc -n default redis -o yaml > {{ kubesphere_dir }}/redis-svc-backup.yaml
+        kubectl get svc -n default redis -o yaml > {{ kubesphere_dir }}/redis-svc-backup.yaml
         &&
-        {{ bin_dir }}/kubectl delete svc -n default redis
+        kubectl delete svc -n default redis
       when:
         - old_redis_exist.stdout != "0"
 
 
     - name: KubeSphere | Deploying redis
       shell: >
-        {{ bin_dir }}/helm upgrade --install ks-redis
+        helm upgrade --install ks-redis
         {{ kubesphere_dir }}/redis-ha
         -f {{ kubesphere_dir }}/custom-values-redis.yaml
         --set fullnameOverride=redis-ha
         --namespace default
-
-
-#    - name: KubeSphere | Getting redis PodIp
-#      shell: >
-#        {{ bin_dir }}/kubectl get pod
-#        -n default
-#        -l  app=redis,tier=database,version=redis-4.0
-#        -ojsonpath='{.items[0].status.podIP}'
-#      register: redis_podIp
-#      when:
-#        - old_redis_exist.stdout != "0"
-#
-#
-#    - import_tasks: redis-migration.yaml
-#      when:
-#        - old_redis_exist.stdout != "0"
 
   when:
     - common.redis.enableHA is defined and common.redis.enableHA
@@ -73,7 +57,7 @@
 
 - name: KubeSphere | Deploying redis
   shell: >
-    {{ bin_dir }}/kubectl -n default apply -f {{ kubesphere_dir }}/common/{{ item }}
+    kubectl -n default apply -f {{ kubesphere_dir }}/common/{{ item }}
   loop:
     - "redis.yaml"
   register: redis_result
@@ -86,7 +70,7 @@
 
 - name: KubeSphere | Importing redis status
   shell: >
-    {{ bin_dir }}/kubectl patch cc ks-installer
+    kubectl patch cc ks-installer
     --type merge
     -p '{"status": {"redis": {"status": "enabled", "enabledTime": "{{ lookup('pipe','date  +%Y-%m-%dT%H:%M:%S%Z') }}"}}}'
     -n default

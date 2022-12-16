@@ -65,7 +65,7 @@ spec:
     spec:
       containers:
       - name: minio
-        image: {{ minio_repo }}:{{ minio_tag }}
+        image: {{ kube_image_repository }}/minio:{{ kube_image_tag }}
         imagePullPolicy: IfNotPresent
         lifecycle:
           postStart:

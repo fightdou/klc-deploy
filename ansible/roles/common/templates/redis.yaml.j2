@@ -40,7 +40,7 @@ spec:
     spec:
       initContainers:
       - name: init
-        image: {{ redis_repo }}:{{ redis_tag }}
+        image: {{ kube_image_repository }}/redis:{{ kube_image_tag }}
         command: ['sh', '-c', 'cat /tmp/redis/redis.conf | sed "s/REDIS_PASSWORD/$KUBESPHERE_REDIS_PASSWORD/" > /data/redis.conf']
         volumeMounts:
         - mountPath: /data

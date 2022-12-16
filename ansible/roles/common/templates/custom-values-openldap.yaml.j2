@@ -2,8 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 image:
-  repository: {{ openldap_repo }}
-  tag: {{ openldap_tag }}
+  repository: {{ kube_image_repository }}/openldap
+  tag: {{ kube_image_tag }}
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -18,8 +18,8 @@ service:
 ldap:
   replication: {% if enableHA is defined and enableHA %}true{% else %}false{% endif %}
 
-  organisation: kubesphere
-  domain: kubesphere.io
+  organisation: troila
+  domain: troila.io
   adminPassword: admin
 
 persistence:

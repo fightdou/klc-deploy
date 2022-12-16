@@ -29,7 +29,7 @@ spec:
           value: admin
         - name: LDAP_NOFILE
           value: "2048"
-        image: {{ openldap_repo }}:{{ openldap_tag }}
+        image: {{ kube_image_repository }}/openldap:{{ kube_image_tag }}
         imagePullPolicy: IfNotPresent
         name: openldap
         volumeMounts:

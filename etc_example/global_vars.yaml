@@ -52,7 +52,8 @@ harbor_chart_url:
 #####################
 # Kubernetes options
 #####################
-
+persistence:
+  storageClass: "general"
 authentication:
   jwtSecret: ""
 common:
@@ -66,7 +67,7 @@ common:
     enableHA: false
     volumeSize: 2Gi
   openldap:
-    enabled: false
+    enabled: true
     volumeSize: 2Gi
   minio:
     volumeSize: 20Gi
