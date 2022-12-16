@@ -1,18 +1,27 @@
 ---
 - import_tasks: generate_manifests.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - import_tasks: prometheus-operator.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - import_tasks: node-exporter.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - import_tasks: kube-state-metrics.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - import_tasks: prometheus.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - import_tasks: k8s-monitor.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
-- import_tasks: ks-core-monitor.yaml
+- import_tasks: ks-core-monitor.yaml 
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - import_tasks: alertmanager.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - import_tasks: notification-manager.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"

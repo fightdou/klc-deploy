@@ -2,12 +2,12 @@
 - block:
   - name: KubeSphere | Getting sonarqube host
     shell: >
-      {{ bin_dir }}/kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "host" | awk '{print $2}'
+      kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "host" | awk '{print $2}'
     register: sonarqube_host
 
   - name: KubeSphere | Getting sonarqube token
     shell: >
-      {{ bin_dir }}/kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "token" | awk '{print $2}'
+      kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "token" | awk '{print $2}'
     register: sonarqube_token
   when:
     - devops.sonarqube is not defined
@@ -30,7 +30,7 @@
 - block:
   - name: KubeSphere | Getting es index prefix
     shell: >
-      {{ bin_dir }}/kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "logging:" -A 2 | grep "indexPrefix" | awk '{print $2}'
+      kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "logging:" -A 2 | grep "indexPrefix" | awk '{print $2}'
     register: es_indexPrefix
 
 - set_fact:
@@ -40,17 +40,17 @@
 
 - name: KubeSphere | Getting token
   shell: >
-    {{ bin_dir }}/kubectl get secret kubesphere-secret -o jsonpath='{.data.token}' | base64 -d
+    kubectl get secret kubesphere-secret -o jsonpath='{.data.token}' | base64 -d
   register: ks_token_str
 
 - name: KubeSphere | Getting ks-secret
   shell: >
-    {{ bin_dir }}/kubectl get secret kubesphere-secret -o jsonpath='{.data.secret}' | base64 -d
+    kubectl get secret kubesphere-secret -o jsonpath='{.data.secret}' | base64 -d
   register: ks_secret_str
 
 #- name: KubeSphere | Checking Kubernetes version
 #  shell: >
-#    {{ bin_dir }}/kubectl version -o json | jq '.serverVersion.gitVersion' | sed s/\"//g
+#    kubectl version -o json | jq '.serverVersion.gitVersion' | sed s/\"//g
 #  register: kubernetes_version
 
 - debug:
@@ -70,7 +70,7 @@
 
 - name: KubeSphere | Getting Kubernetes master num
   shell: >
-    {{ bin_dir }}/kubectl get node | awk '{if(NR>1){print $3}}' | grep master | wc -l
+    kubectl get node | awk '{if(NR>1){print $3}}' | grep master | wc -l
   register: masters
   failed_when: false
 
@@ -84,7 +84,7 @@
 
 - name: OpenPitrix | Check OpenPitrix v3.0.0
   shell: >
-    {{ bin_dir }}/kubectl get deploy openpitrix-hyperpitrix-deployment -n openpitrix-system 2>1 -oNAME | wc -l
+    kubectl get deploy openpitrix-hyperpitrix-deployment -n openpitrix-system 2>1 -oNAME | wc -l
   register: openpitrix_deploy_count
 
 - set_fact:
@@ -101,7 +101,7 @@
 
 
 - name: KubeSphere | Initing KubeSphere
-  shell: "{{ bin_dir }}/kubectl apply -f {{ kubesphere_dir }}/{{ item }}"
+  shell: "kubectl apply -f {{ kubesphere_dir }}/{{ item }}"
   loop:
     - "kubesphere-config.yaml"
   register: init_result

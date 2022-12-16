@@ -3,6 +3,7 @@
   file:
     name: /etc/kubernetes/plugins/kubefed
     state: directory
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: 复制 kubefed charts 目录
   copy:
@@ -10,6 +11,7 @@
     dest: "{{ helm_charts_dir }}/"
   loop:
     - "kubefed"
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 # Get the matched kubectl image
 - name: KubeSphere | Setting kubectl image version
@@ -19,19 +21,23 @@
   loop: "{{ query('dict', ks_kubectl_versions) }}"
   when:
     - kubectl_break is undefined and kubernetes_version is defined and kubernetes_version is version(item.key, '>=')
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - debug:
     msg: Current kubectl image version is {{ ks_kubectl_tag }}
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Kubefed | Creating custom-values-kubefed.yaml
   template:
     src: "custom-values-kubefed.yaml.j2"
     dest: /etc/kubernetes/plugins/kubefed/custom-values-kubefed.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Kubefed | Creating tower.yaml
   template:
     src: "tower.yaml.j2"
     dest: /etc/kubernetes/plugins/kubefed/tower.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - block:
     - name: Tower | Installing tower
@@ -54,14 +60,17 @@
 
     - name: Kubfed | Labeling default namespace
       shell: kubectl label namespace {{ helm_install_namespace }} kubesphere.io/workspace=system-workspace --overwrite
-
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  
 - name: KubeSphere | Checking kubefed-admission-webhook status
   wait_for:
     host: "kubefed-admission-webhook.{{ helm_install_namespace }}.svc"
     port: 443
     delay: 5
     timeout: 1800
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Kubefed | Creating MultiCluster crds
   shell: "kubectl apply -f {{ helm_charts_dir }}/kubefed/federatedcrds/ -n {{ helm_install_namespace }}"
   ignore_errors: true
+  delegate_to: "{{ groups['kube-master'][0] }}"

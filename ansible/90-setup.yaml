@@ -40,17 +40,6 @@
         tags: csi,
         when: enable_ceph| bool }
 
-- name: Apply role ceph-csi
-  gather_facts: false
-  hosts: 
-    - ceph-csi
-    - ceph-csi-cephfs
-    - ceph-csi-rbd
-  roles:
-    - { role: csi,
-        tags: csi,
-        when: enable_ceph| bool }
-
 - name: Apply role common
   gather_facts: false
   hosts: 

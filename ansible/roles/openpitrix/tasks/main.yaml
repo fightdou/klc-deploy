@@ -3,26 +3,32 @@
   file:
     name: /etc/kubernetes/plugins/openpitrix
     state: directory
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: OpenPitrix | Getting OpenPitrix jobs files
   template:
     src: "ks-openpitrix-import.yaml.j2"
     dest: "/etc/kubernetes/plugins/openpitrix/ks-openpitrix-import.yaml"
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: OpenPitrix | Getting builtin-repo.yaml.j2 files
   template:
     src: "builtin-repo.yaml.j2"
     dest: "/etc/kubernetes/plugins/openpitrix/builtin-repo.yaml"
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: OpenPitrix | Import App
   shell: kubectl apply -f /etc/kubernetes/plugins/openpitrix/ks-openpitrix-import.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: OpenPitrix | Check whether builtin repo exists
   shell: kubectl get hrepo builtin-stable -oname
   register: builtin_repo_output
   failed_when: false
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: OpenPitrix | Create builtin repo
   shell: kubectl apply -f /etc/kubernetes/plugins/openpitrix/builtin-repo.yaml
   when:
     - builtin_repo_output.stdout is not defined or builtin_repo_output.stdout == ""
+  delegate_to: "{{ groups['kube-master'][0] }}"

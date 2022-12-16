@@ -16,13 +16,13 @@
 
     - name: OpenPitrix | Upgrade OpenPitrix
       shell: >
-        {{ bin_dir }}/kubectl apply -f {{ kubesphere_dir }}/openpitrix/ks-openpitrix-upgrade.yaml
+        kubectl apply -f {{ kubesphere_dir }}/openpitrix/ks-openpitrix-upgrade.yaml
       register: job
       failed_when: "job.stderr and 'Warning' not in job.stderr"
 
     - name: OpenPitrix | Delete namespace openpitrix-system
       shell: >
-        {{ bin_dir }}/kubectl delete  namespace openpitrix-system --force --grace-period=0
+        kubectl delete  namespace openpitrix-system --force --grace-period=0
 
   when:
     -  OPMigrate is defined and OPMigrate
@@ -32,7 +32,7 @@
 
 - name: Alerting | Checking status v3.0.0
   shell: >
-    {{ bin_dir }}/kubectl get deploy -n kubesphere-alerting-system 2>1 | grep "alerting" | wc -l
+    kubectl get deploy -n kubesphere-alerting-system 2>1 | grep "alerting" | wc -l
   register: alerting_check
 
 - block:
@@ -52,13 +52,13 @@
 
     - name: Alerting | Creating migration job
       shell: >
-        {{ bin_dir }}/kubectl apply -f {{ kubesphere_dir }}/alerting-migration
+        kubectl apply -f {{ kubesphere_dir }}/alerting-migration
       register: job
       failed_when: "job.stderr and 'Warning' not in job.stderr"
 
     - name: Alerting | Getting migration job status
       shell: >
-        {{ bin_dir }}/kubectl get pod -n default -l job-name=ks-alerting-migration --no-headers | awk '{print $3}'
+        kubectl get pod -n default -l job-name=ks-alerting-migration --no-headers | awk '{print $3}'
       register: job_status
       until: job_status.stdout.find('Completed') != -1
       retries: 90
@@ -66,7 +66,7 @@
 
     - name: Alerting | Getting migration job status
       shell: >
-        {{ bin_dir }}/kubectl delete ns kubesphere-alerting-system --force --grace-period=0
+        kubectl delete ns kubesphere-alerting-system --force --grace-period=0
       failed_when: false
 
   when:
