@@ -8,7 +8,7 @@ metadata:
     iam.kubesphere.io/uninitialized: "true"
     helm.sh/resource-policy: keep
 spec:
-  email: admin@kubesphere.io
+  email: admin@troila.com
   password: {{ include "getOrDefaultPass" . | quote }}
 status:
   state: Active

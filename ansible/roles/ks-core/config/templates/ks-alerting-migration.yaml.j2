@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: ks-alerting-migration
-  namespace: klc-system
+  namespace: {{ helm_install_namespace }}
   labels:
     app: ks-alerting-migration
     job: ks-alerting-migration
@@ -23,11 +23,11 @@ spec:
         - name: wait-mysql
           image: {{ alpine_repo }}:{{ alpine_tag }}
           imagePullPolicy: IfNotPresent
-          command: ['sh', '-c', 'until nc -z mysql.klc-system.svc 3306; do echo "waiting for mysql"; sleep 2; done;']
+          command: ['sh', '-c', 'until nc -z mysql.{{ helm_install_namespace }}.svc 3306; do echo "waiting for mysql"; sleep 2; done;']
         - name: wait-apiserver
           image: {{ alpine_repo }}:{{ alpine_tag }}
           imagePullPolicy: IfNotPresent
-          command: ['sh', '-c', 'until nc -z ks-apiserver.klc-system.svc 80; do echo "waiting for apiserver"; sleep 2; done;']
+          command: ['sh', '-c', 'until nc -z ks-apiserver.{{ helm_install_namespace }}.svc 80; do echo "waiting for apiserver"; sleep 2; done;']
       containers:
         - image: {{ ks_alerting_migration_repo }}:{{ ks_alerting_migration_tag }}
           imagePullPolicy: IfNotPresent

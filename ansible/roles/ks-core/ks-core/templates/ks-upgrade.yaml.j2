@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: ks-upgrade
-  namespace: klc-system
+  namespace: {{ helm_install_namespace }}
   labels:
     job: ks-upgrade
     version: v3.0.0
@@ -17,6 +17,6 @@ spec:
             - ks-upgrade
             - --logtostderr
             - --v=4
-          image: {{ ks_update_repo }}:{{ ks_update_tag }}
+          image: {{ kube_image_repository }}/ks-upgrade:{{ kube_image_tag }}
           imagePullPolicy: IfNotPresent
           name: ks-upgrade

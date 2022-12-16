@@ -1,18 +1,16 @@
 ---
 - name: KubeSphere | Creating KubeSphere directory
   file:
-    path: "{{ kubesphere_dir }}"
+    path: "{{ helm_charts_dir }}"
     state: directory
     mode: 0755
-
 
 - name: KubeSphere | Getting installation init files
   copy:
     src: "{{ item }}"
-    dest: "{{ kubesphere_dir }}/"
+    dest: "{{ helm_charts_dir }}/"
   loop:
     - "jwt-script"
-
 
 # https://tools.ietf.org/html/rfc7518#section-3.2
 # A key of the same size as the hash output (for instance, 256 bits for"HS256") or larger MUST be used with this algorithm.
@@ -38,33 +36,31 @@
 
 - name: KubeSphere | Enabling Token Script
   file:
-    path: "{{ kubesphere_dir }}/jwt-script/jwt.sh"
+    path: "{{ helm_charts_dir }}/jwt-script/jwt.sh"
     mode: 0755
 
 
 - name: KubeSphere | Getting KubeSphere Token
   shell: >
-    /bin/bash {{ kubesphere_dir }}/jwt-script/jwt.sh  {{ ks_secret_str }} '{"email": "admin@kubesphere.io","username": "admin","token_type": "static_token"}'
+    /bin/bash {{ helm_charts_dir }}/jwt-script/jwt.sh  {{ ks_secret_str }} '{"email": "admin@kubesphere.io","username": "admin","token_type": "static_token"}'
   register: ks_token
 
 
 - name: KubeSphere | Checking KubeSphere secrets
-  shell: >
-    {{ bin_dir }}/kubectl get secrets -n klc-system
+  shell: kubectl get secrets -n {{ helm_install_namespace }}
   register: kubesphere_secrets
 
 - name: KubeSphere | Deleting KubeSphere secret
   shell: >
-    {{ bin_dir }}/kubectl delete secrets -n klc-system kubesphere-secret
+    {{ bin_dir }}/kubectl delete secrets -n {{ helm_install_namespace }} kubesphere-secret
   when:
     - kubesphere_secrets.stdout.find("kubesphere-secret") != -1
     - authentication is defined and authentication.jwtSecret is defined and authentication.jwtSecret != ""
 
 - name: KubeSphere | Creating components token
-  shell: >
-    {{ bin_dir }}/kubectl create secret generic kubesphere-secret
+  shell: kubectl create secret generic kubesphere-secret
     --from-literal=token={{ ks_token.stdout }}
     --from-literal=secret={{ ks_secret_str }}
-    -n klc-system
+    -n {{ helm_install_namespace }}
   register: secret_status
   failed_when: "secret_status.stderr and 'already exists' not in secret_status.stderr"

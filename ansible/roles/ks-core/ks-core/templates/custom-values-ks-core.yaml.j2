@@ -5,20 +5,20 @@ replicaCount: 1
 {% endif %}
 
 image:
-  ks_controller_manager_repo: {{ ks_controller_manager_repo }}
-  ks_controller_manager_tag: {{ ks_controller_manager_tag }}
-  ks_apiserver_repo: {{ ks_apiserver_repo }}
-  ks_apiserver_tag: {{ ks_apiserver_tag }}
-  ks_console_repo: {{ ks_console_repo }}
-  ks_console_tag: {{ ks_console_tag }}
-  ks_kubectl_repo: {{ ks_kubectl_repo }}
-  ks_kubectl_tag: {{ ks_kubectl_tag }}
-  nginx_ingress_controller_repo: {{ nginx_ingress_controller_repo }}
-  nginx_ingress_controller_tag: {{ nginx_ingress_controller_tag }}
-  defaultbackend_repo: {{ defaultbackend_repo }}
-  defaultbackend_tag: {{ defaultbackend_tag }}
+  ks_controller_manager_repo: {{ kube_image_repository }}/ks-controller-manager
+  ks_controller_manager_tag: {{ kube_image_tag }}
+  ks_apiserver_repo: {{ kube_image_repository }}/ks-apiserver
+  ks_apiserver_tag: {{ kube_image_tag }}
+  ks_console_repo: {{ kube_image_repository }}/ks-console
+  ks_console_tag: {{ kube_image_tag }}
+  ks_kubectl_repo: {{ kube_image_repository }}/kubectl
+  ks_kubectl_tag: {{ kube_image_tag }}
+  nginx_ingress_controller_repo: {{ kube_image_repository }}/nginx-ingress-controller
+  nginx_ingress_controller_tag: {{ kube_image_tag }}
+  defaultbackend_repo: {{ kube_image_repository }}/defaultbackend-arm64
+  defaultbackend_tag: {{ kube_image_tag }}
   bookinfo_productpage_v1_repo: {{ bookinfo_productpage_v1_repo }}
-  bookinfo_productpage_v1_tag: {{ bookinfo_productpage_v1_tag }}
+  bookinfo_productpage_v1_tag: {{ kube_image_tag }}
   bookinfo_reviews_v1_repo: {{ bookinfo_reviews_v1_repo }}
   bookinfo_reviews_v1_tag: {{ bookinfo_reviews_v1_tag }}
   bookinfo_details_v1_repo: {{ bookinfo_details_v1_repo }}
@@ -26,6 +26,13 @@ image:
   bookinfo_ratings_v1_repo: {{ bookinfo_ratings_v1_repo }}
   bookinfo_ratings_v1_tag: {{ bookinfo_ratings_v1_tag }}
   pullPolicy: {{ ks_image_pull_policy }}
+
+
+serviceAccount:
+  create: true
+  annotations: {}
+  # The name of the service account to use.
+  name: "klc"
 
 config:
   create: false
