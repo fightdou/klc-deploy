@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/part-of: kube-prometheus
     app.kubernetes.io/vendor: kubesphere
   name: kube-scheduler
-  namespace: klc-monitoring-system
+  namespace: default
 spec:
   endpoints:
   - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token

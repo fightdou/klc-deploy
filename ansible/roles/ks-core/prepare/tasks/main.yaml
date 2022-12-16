@@ -1,19 +1,19 @@
 ---
 - name: KubeSphere | Checking core components (1)
   shell: >
-    {{ bin_dir }}/kubectl get deploy -n klc-system ks-account
+    {{ bin_dir }}/kubectl get deploy -n default ks-account
   register: check_account
   failed_when: "check_account.stderr and 'NotFound' not in check_account.stderr"
 
 - name: KubeSphere | Checking core components (2)
   shell: >
-    {{ bin_dir }}/kubectl get deploy -n klc-system ks-apigateway
+    {{ bin_dir }}/kubectl get deploy -n default ks-apigateway
   register: check_apigateway
   failed_when: "check_apigateway.stderr and 'NotFound' not in check_apigateway.stderr"
 
 - name: KubeSphere | Checking core components (3)
   shell: >
-    {{ bin_dir }}/kubectl get deploy -n klc-system ks-account -o jsonpath='{.spec.replicas}'
+    {{ bin_dir }}/kubectl get deploy -n default ks-account -o jsonpath='{.spec.replicas}'
   register: check_account_replicas
   failed_when: "check_account_replicas.stderr and 'NotFound' not in check_account_replicas.stderr"
   when:
@@ -21,7 +21,7 @@
 
 - name: KubeSphere | Checking core components (4)
   shell: >
-    {{ bin_dir }}/kubectl get deploy -n klc-system ks-apigateway -o jsonpath='{.spec.replicas}'
+    {{ bin_dir }}/kubectl get deploy -n default ks-apigateway -o jsonpath='{.spec.replicas}'
   register: check_apigateway_replicas
   failed_when: "check_apigateway_replicas.stderr and 'NotFound' not in check_apigateway_replicas.stderr"
   when:
@@ -33,7 +33,7 @@
       {{ bin_dir }}/kubectl patch cc ks-installer
       --type merge
       -p '{"status": {"core": {"migration": true}}}'
-      -n klc-system
+      -n default
     register: cc_result
     failed_when: "cc_result.stderr and 'Warning' not in cc_result.stderr"
     until: cc_result is succeeded

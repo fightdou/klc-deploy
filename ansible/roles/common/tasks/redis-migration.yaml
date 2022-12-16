@@ -9,7 +9,7 @@
 
 - name: KubeSphere | Checking redis-ha status
   shell: >
-    {{ bin_dir }}/kubectl get pod -n klc-system | grep 'redis-ha' | grep -v 'Running' | wc -l
+    {{ bin_dir }}/kubectl get pod -n default | grep 'redis-ha' | grep -v 'Running' | wc -l
   register: redis_result
   until: redis_result.stdout == "0"
   retries: 30
@@ -24,4 +24,4 @@
 
 - name: KubeSphere | Disabling old redis
   shell: >
-    {{ bin_dir }}/kubectl -n klc-system scale deployment redis --replicas=0
+    {{ bin_dir }}/kubectl -n default scale deployment redis --replicas=0

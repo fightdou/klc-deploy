@@ -9,6 +9,6 @@ metadata:
     prometheus: k8s
     role: alert-rules
   name: prometheus-operator-rules
-  namespace: klc-monitoring-system
+  namespace: default
 spec:
   groups: []

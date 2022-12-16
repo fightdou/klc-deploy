@@ -129,7 +129,7 @@ notificationmanager:
         notificationTimeout: 5
       wechat:
         notificationTimeout: 5
-  defaultSecretNamespace: klc-monitoring-federated
+  defaultSecretNamespace: default
   groupLabels:
     - alertname
     - namespace
@@ -137,10 +137,10 @@ notificationmanager:
     language: English
     languagePack:
       - name: zh-cn
-        namespace: klc-monitoring-system
+        namespace: default
     text:
       name: notification-manager-template
-      namespace: klc-monitoring-system
+      namespace: default
   volumes:
     - hostPath:
         path: /etc/localtime

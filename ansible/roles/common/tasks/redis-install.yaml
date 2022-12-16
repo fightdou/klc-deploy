@@ -5,7 +5,7 @@
         redis_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
     - name: KubeSphere | Creating Redis Password Secret
       shell: >
-        {{ bin_dir }}/kubectl -n klc-system create secret generic redis-secret --from-literal=auth={{redis_password}}
+        {{ bin_dir }}/kubectl -n default create secret generic redis-secret --from-literal=auth={{redis_password}}
       register: secret
       failed_when: "secret.stderr and 'already exists' not in secret.stderr"
 
@@ -30,15 +30,15 @@
 
     - name: KubeSphere | Checking old redis status
       shell: >
-        {{ bin_dir }}/kubectl get pod -n klc-system  -l app=redis,tier=database,version=redis-4.0 | wc -l
+        {{ bin_dir }}/kubectl get pod -n default  -l app=redis,tier=database,version=redis-4.0 | wc -l
       register: old_redis_exist
 
 
     - name: KubeSphere | Deleting and backup old redis svc
       shell: >
-        {{ bin_dir }}/kubectl get svc -n klc-system redis -o yaml > {{ kubesphere_dir }}/redis-svc-backup.yaml
+        {{ bin_dir }}/kubectl get svc -n default redis -o yaml > {{ kubesphere_dir }}/redis-svc-backup.yaml
         &&
-        {{ bin_dir }}/kubectl delete svc -n klc-system redis
+        {{ bin_dir }}/kubectl delete svc -n default redis
       when:
         - old_redis_exist.stdout != "0"
 
@@ -49,13 +49,13 @@
         {{ kubesphere_dir }}/redis-ha
         -f {{ kubesphere_dir }}/custom-values-redis.yaml
         --set fullnameOverride=redis-ha
-        --namespace klc-system
+        --namespace default
 
 
 #    - name: KubeSphere | Getting redis PodIp
 #      shell: >
 #        {{ bin_dir }}/kubectl get pod
-#        -n klc-system
+#        -n default
 #        -l  app=redis,tier=database,version=redis-4.0
 #        -ojsonpath='{.items[0].status.podIP}'
 #      register: redis_podIp
@@ -73,7 +73,7 @@
 
 - name: KubeSphere | Deploying redis
   shell: >
-    {{ bin_dir }}/kubectl -n klc-system apply -f {{ kubesphere_dir }}/common/{{ item }}
+    {{ bin_dir }}/kubectl -n default apply -f {{ kubesphere_dir }}/common/{{ item }}
   loop:
     - "redis.yaml"
   register: redis_result
@@ -89,7 +89,7 @@
     {{ bin_dir }}/kubectl patch cc ks-installer
     --type merge
     -p '{"status": {"redis": {"status": "enabled", "enabledTime": "{{ lookup('pipe','date  +%Y-%m-%dT%H:%M:%S%Z') }}"}}}'
-    -n klc-system
+    -n default
   register: cc_result
   failed_when: "cc_result.stderr and 'Warning' not in cc_result.stderr"
   until: cc_result is succeeded

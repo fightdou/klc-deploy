@@ -5,14 +5,14 @@ common:
   openldapVolumeSize: 2Gi
   redisVolumSize: 2Gi
   monitoring:
-    endpoint: http://prometheus-operated.klc-monitoring-system.svc:9090
+    endpoint: http://prometheus-operated.default.svc:9090
 
 op_minio_accesskey: openpitrixminioaccesskey
 op_minio_secretkey: openpitrixminiosecretkey
 
 
 op_minio_svc: http://openpitrix-minio.openpitrix-system.svc:9000
-ks_minio_svc: http://minio.klc-system.svc:9000
+ks_minio_svc: http://minio.default.svc:9000
 
 
-ks_redis_svc: redis.klc-system.svc
+ks_redis_svc: redis.default.svc

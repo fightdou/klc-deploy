@@ -16,7 +16,7 @@
 
 - name: KubeSphere | Checking minio
   shell: >
-    {{ bin_dir }}/helm list -n klc-system | grep "ks-minio"
+    {{ bin_dir }}/helm list -n default | grep "ks-minio"
   register: minio_check
   failed_when: false
 
@@ -28,7 +28,7 @@
         {{ kubesphere_dir }}/minio-ha
         -f {{ kubesphere_dir }}/custom-values-minio.yaml
         --set fullnameOverride=minio
-        --namespace klc-system
+        --namespace default
         --wait --timeout 1800s
       register: minio_status
       failed_when: false
@@ -38,9 +38,9 @@
         msg:
          - 1. check the storage configuration and storage server
          - 2. make sure the DNS address in /etc/resolv.conf is available
-         - 3. execute 'kubectl logs -n klc-system -l job-name=minio-make-bucket-job' to watch logs
-         - 4. execute 'helm -n klc-system uninstall ks-minio && kubectl -n klc-system delete job minio-make-bucket-job'
-         - 5. Restart the installer pod in klc-system namespace
+         - 3. execute 'kubectl logs -n default -l job-name=minio-make-bucket-job' to watch logs
+         - 4. execute 'helm -n default uninstall ks-minio && kubectl -n default delete job minio-make-bucket-job'
+         - 5. Restart the installer pod in default namespace
       when: minio_status.rc != 0
 
 
@@ -56,7 +56,7 @@
     {{ bin_dir }}/kubectl patch cc ks-installer
     --type merge
     -p '{"status": {"minio": {"status": "enabled", "enabledTime": "{{ lookup('pipe','date  +%Y-%m-%dT%H:%M:%S%Z') }}"}}}'
-    -n klc-system
+    -n default
   register: cc_result
   failed_when: "cc_result.stderr and 'Warning' not in cc_result.stderr"
   until: cc_result is succeeded

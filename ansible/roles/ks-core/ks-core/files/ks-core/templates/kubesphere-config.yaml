@@ -23,9 +23,9 @@ data:
         accessTokenMaxAge: 0
 {{- end }}
     monitoring:
-      endpoint: {{ .Values.config.monitoring.endpoint | default "http://prometheus-operated.klc-monitoring-system.svc:9090" }}
+      endpoint: {{ .Values.config.monitoring.endpoint | default "http://prometheus-operated.default.svc:9090" }}
     notification:
-      endpoint: {{ .Values.config.notification.endpoint | default "http://notification-manager-svc.klc-monitoring-system.svc:19093" }}
+      endpoint: {{ .Values.config.notification.endpoint | default "http://notification-manager-svc.default.svc:19093" }}
 
     {{- with .Values.config.servicemesh }}
     servicemesh:

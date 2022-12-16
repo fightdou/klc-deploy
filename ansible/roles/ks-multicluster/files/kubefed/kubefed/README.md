@@ -48,12 +48,12 @@ Install the chart and specify the version to install with the
 If you don't want to install CRDs, add a `--skip-crds` at the end of the line:
 
 ```bash
-$ helm --namespace kube-federation-system upgrade -i kubefed kubefed-charts/kubefed --version=<x.x.x> --create-namespace
+$ helm --namespace default upgrade -i kubefed kubefed-charts/kubefed --version=<x.x.x> --create-namespace
 
 Release "kubefed" does not exist. Installing it now.
 NAME: kubefed
 LAST DEPLOYED: Wed Aug  5 16:03:46 2020
-NAMESPACE: kube-federation-system
+NAMESPACE: default
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
@@ -78,13 +78,13 @@ namespace with this label by default.
 Delete all KubeFed `FederatedTypeConfig`:
 
 ```bash
-$ kubectl -n kube-federation-system delete FederatedTypeConfig --all
+$ kubectl -n default delete FederatedTypeConfig --all
 ```
 
 Then you can uninstall/delete the `kubefed` release:
 
 ```bash
-$ helm --namespace kube-federation-system uninstall kubefed
+$ helm --namespace default uninstall kubefed
 ```
 
 The command above removes all the Kubernetes components associated with the chart
@@ -144,7 +144,7 @@ Alternatively, a YAML file that specifies the values for the parameters can be
 provided while installing the chart. For example:
 
 ```bash
-$ helm install kubefed-charts/kubefed --name kubefed --namespace kube-federation-system --values values.yaml --devel
+$ helm install kubefed-charts/kubefed --name kubefed --namespace default --values values.yaml --devel
 ```
 
 ## Migration from Helm v2 to v3
@@ -171,7 +171,7 @@ $ helm 2to3 convert kubefed
 Check your successful migration:
 
 ```bash
-$ helm -n kube-federation-system list
+$ helm -n default list
 NAME    NAMESPACE               REVISION        UPDATED                                 STATUS          CHART           APP VERSION
-kubefed kube-federation-system  1               2020-08-06 16:49:41.593438079 +0000 UTC deployed        kubefed-0.3.1
+kubefed default  1               2020-08-06 16:49:41.593438079 +0000 UTC deployed        kubefed-0.3.1
 ```

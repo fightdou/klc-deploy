@@ -100,7 +100,7 @@ spec:
                 values:
                 - ks-controller-manager
             namespaces:
-            - klc-system
+            - default
 {{- with .Values.nodeAffinity }}
         nodeAffinity:
 {{ toYaml . | indent 10 }}

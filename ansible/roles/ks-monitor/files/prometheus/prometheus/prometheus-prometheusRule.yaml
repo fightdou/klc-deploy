@@ -10,14 +10,14 @@ metadata:
     prometheus: k8s
     role: alert-rules
   name: prometheus-k8s-prometheus-rules
-  namespace: klc-monitoring-system
+  namespace: default
 spec:
   groups:
   - name: prometheus.rules
     rules:
     - expr: |
-        sum by(cluster) (up{job="prometheus-k8s",namespace="klc-monitoring-system"} == 1)
+        sum by(cluster) (up{job="prometheus-k8s",namespace="default"} == 1)
       record: prometheus:up:sum
     - expr: |
-        sum(rate(prometheus_tsdb_head_samples_appended_total{job="prometheus-k8s",namespace="klc-monitoring-system"} [5m])) by (job, pod, cluster)
+        sum(rate(prometheus_tsdb_head_samples_appended_total{job="prometheus-k8s",namespace="default"} [5m])) by (job, pod, cluster)
       record: prometheus:prometheus_tsdb_head_samples_appended:sum_rate

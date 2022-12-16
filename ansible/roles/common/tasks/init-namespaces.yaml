@@ -10,10 +10,7 @@
 - name: KubeSphere | Getting system namespaces
   set_fact:
     systemNamespaces: >-
-      klc-system
-      klc-controls-system
-      klc-monitoring-system
-      klc-monitoring-federated
+      default
       {%- if kube_node_lease is defined and kube_node_lease.stdout != "0" %}
       kube-node-lease
       {%- endif %}
@@ -33,9 +30,8 @@
       istio-system
       {%- endif %}
       {%- if multicluster is defined and multicluster.clusterRole is defined and multicluster.clusterRole == 'host' %}
-      kube-federation-system
+      default
       {%- endif %}
-
 
 - set_fact:
     systemNamespacesList: "{{ systemNamespaces.split(' ') }}"

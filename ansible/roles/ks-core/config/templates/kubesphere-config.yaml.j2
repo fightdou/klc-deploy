@@ -23,7 +23,7 @@ data:
           - '*'
 {% if (common.openldap is defined and common.openldap.enabled is defined and common.openldap.enabled) or devops.enabled %}
     ldap:
-      host: openldap.klc-system.svc:389
+      host: openldap.default.svc:389
       managerDN: cn=admin,dc=kubesphere,dc=io
       managerPassword: admin
       userSearchBase: ou=Users,dc=kubesphere,dc=io
@@ -31,14 +31,14 @@ data:
 {% endif %}
 {% if (common.redis is defined and common.redis.enabled is defined and common.redis.enabled) or (enableHA is defined and enableHA) %}
     redis:
-      host: redis.klc-system.svc
+      host: redis.default.svc
       port: 6379
       password: KUBESPHERE_REDIS_PASSWORD
       db: 0
 {% endif %}
 {% if OPMigrate is defined and OPMigrate %}
     mysql:
-      host: mysql.klc-system.svc:3306
+      host: mysql.default.svc:3306
       username: {{ common.mysqlUsername | default("root") }}
       password: {{ common.mysqlPassword | default("password") }}
       maxIdleConnections: 100
@@ -47,7 +47,7 @@ data:
 {% endif %}
 {% if devops.enabled %}
     s3:
-      endpoint: {{ common.s3.endpoint | default('http://minio.klc-system.svc:9000') }}
+      endpoint: {{ common.s3.endpoint | default('http://minio.default.svc:9000') }}
       region: {{ common.s3.region | default('us-east-1') }}
       disableSSL: {{ common.s3.disableSSL | default(true) }}
       forcePathStyle: {{ common.s3.forcePathStyle | default(true) }}
@@ -85,13 +85,13 @@ data:
     servicemesh:
       istioPilotHost: http://istiod.istio-system.svc:8080/version
       jaegerQueryHost: http://jaeger-query.istio-system.svc:16686
-      servicemeshPrometheusHost: http://prometheus-k8s.klc-monitoring-system.svc:9090
+      servicemeshPrometheusHost: http://prometheus-k8s.default.svc:9090
       kialiQueryHost: http://kiali.istio-system:20001
 {% endif %}
 {% if openpitrix.store is defined and openpitrix.store.enabled is defined and openpitrix.store.enabled %}
     openpitrix:
       s3:
-        endpoint: {{ common.s3.endpoint | default('http://minio.klc-system.svc:9000') }}
+        endpoint: {{ common.s3.endpoint | default('http://minio.default.svc:9000') }}
         region: {{ common.s3.region | default('us-east-1') }}
         disableSSL: {{ common.s3.disableSSL | default(true) }}
         forcePathStyle: {{ common.s3.forcePathStyle | default(true) }}
@@ -107,7 +107,7 @@ data:
 {% if multicluster.clusterRole is defined and multicluster.clusterRole == "host" %}
       enable: true
       agentImage: {{ tower_repo }}/{{ tower_image }}:{{ tower_image_tag }}
-      proxyPublishService: tower.klc-system.svc
+      proxyPublishService: tower.default.svc
 {% if multicluster.proxyPublishAddress is defined and multicluster.proxyPublishAddress != "" %}
       proxyPublishAddress: {{ multicluster.proxyPublishAddress }}
 {% endif %}
@@ -122,7 +122,7 @@ data:
 {% if common.monitoring is defined and common.monitoring.endpoint is defined %}
       endpoint: {{ common.monitoring.endpoint }}
 {% else %}
-      endpoint: http://prometheus-operated.klc-monitoring-system.svc:9090
+      endpoint: http://prometheus-operated.default.svc:9090
 {% endif %}
 {% if common.monitoring.GPUMonitoring is defined and common.monitoring.GPUMonitoring.enabled == true %}
       enableGPUMonitoring: true
@@ -144,7 +144,7 @@ data:
 {% if common.notification is defined and common.notification.endpoint is defined %}
       endpoint: {{ common.notification.endpoint }}
 {% else %}
-      endpoint: http://notification-manager-svc.klc-monitoring-system.svc:19093
+      endpoint: http://notification-manager-svc.default.svc:19093
 {% endif %}
 {% if logging.enabled is defined and logging.enabled == true %}
     logging:
@@ -233,9 +233,9 @@ data:
 {% if common.monitoring is defined and common.monitoring.endpoint is defined %}
       prometheusEndpoint: {{ common.monitoring.endpoint }}
 {% else %}
-      prometheusEndpoint: http://prometheus-operated.klc-monitoring-system.svc:9090
+      prometheusEndpoint: http://prometheus-operated.default.svc:9090
 {% endif %}
-      thanosRulerEndpoint: http://thanos-ruler-operated.klc-monitoring-system.svc:10902
+      thanosRulerEndpoint: http://thanos-ruler-operated.default.svc:10902
       thanosRuleResourceLabels: thanos-ruler=kubesphere,role=alert-rules
 {% endif %}
 
@@ -260,9 +260,9 @@ data:
 {% if gateway is defined and gateway.namespace is defined %}
       namespace: {{ gateway.namespace }}
 {% else %}
-      namespace: klc-controls-system
+      namespace: default
 {% endif %}
 kind: ConfigMap
 metadata:
   name: kubesphere-config
-  namespace: klc-system
+  namespace: default

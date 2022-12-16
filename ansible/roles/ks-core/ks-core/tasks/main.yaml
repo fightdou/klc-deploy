@@ -41,7 +41,7 @@
 
 - name: KubeSphere | Convert ks-core to helm mananged
   shell: kubectl -n {{ helm_install_namespace }} annotate --overwrite {{ item.kind }} {{ item.resource }} meta.helm.sh/release-name={{ item.release }} &&
-    kubectl -n {{ helm_install_namespace }} annotate --overwrite {{ item.kind }} {{ item.resource }} meta.helm.sh/release-namespace=klc-system &&
+    kubectl -n {{ helm_install_namespace }} annotate --overwrite {{ item.kind }} {{ item.resource }} meta.helm.sh/release-namespace=default &&
     kubectl -n {{ helm_install_namespace }} label --overwrite {{ item.kind }} {{ item.resource }} app.kubernetes.io/managed-by=Helm
   loop:
     - {kind: "serviceaccounts", resource: "kubesphere-cluster-admin", release: "ks-core"}

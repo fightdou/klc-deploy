@@ -35,4 +35,4 @@ data:
 kind: ConfigMap
 metadata:
   name: zh-cn
-  namespace: klc-monitoring-system
+  namespace: default

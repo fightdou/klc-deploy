@@ -2,10 +2,10 @@
 generate_configmap() {
     # your server name goes here
 server=https://kubernetes.default.svc
-name=$(kubectl -n klc-system get sa kubesphere -o json | jq -r .secrets[].name)
+name=$(kubectl -n default get sa kubesphere -o json | jq -r .secrets[].name)
 
-ca=$(kubectl -n klc-system get secret/$name -o jsonpath='{.data.ca\.crt}')
-token=$(kubectl -n klc-system get secret/$name -o jsonpath='{.data.token}' | base64 -d)
+ca=$(kubectl -n default get secret/$name -o jsonpath='{.data.ca\.crt}')
+token=$(kubectl -n default get secret/$name -o jsonpath='{.data.token}' | base64 -d)
 namespace=default
 
 cat << EOF
@@ -34,12 +34,12 @@ data:
 kind: ConfigMap
 metadata:
   name: kubeconfig-admin
-  namespace: klc-controls-system
+  namespace: default
 EOF
 }
 
 generate_kubeconfig_admin() {
-    kubectl -n klc-controls-system get cm kubeconfig-admin > /dev/null 2>&1
+    kubectl -n default get cm kubeconfig-admin > /dev/null 2>&1
 
     if [ $? -ne 0 ];then
       echo "kubeconfig-admin not exist, will be generated..."

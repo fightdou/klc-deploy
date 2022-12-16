@@ -86,11 +86,11 @@
 
     - name: Getting PersistentVolumeName (mysql)
       shell: >
-        kubectl get pv | grep "klc-system/mysql-pvc" | awk '{print $1}'
+        kubectl get pv | grep "default/mysql-pvc" | awk '{print $1}'
       register: pvName
     - name: Getting PersistentVolumeSize (mysql)
       shell: >
-        kubectl get pv | grep "klc-system/mysql-pvc" | awk '{print $2}'
+        kubectl get pv | grep "default/mysql-pvc" | awk '{print $2}'
       register: pvSize
 
     - name: Setting PersistentVolumeName (mysql)
@@ -104,11 +104,11 @@
 
     - name: Getting PersistentVolumeName (etcd)
       shell: >
-        kubectl get pv | grep "klc-system/etcd-pvc" | awk '{print $1}'
+        kubectl get pv | grep "default/etcd-pvc" | awk '{print $1}'
       register: pvName
     - name: Getting PersistentVolumeSize (etcd)
       shell: >
-        kubectl get pv | grep "klc-system/etcd-pvc" | awk '{print $2}'
+        kubectl get pv | grep "default/etcd-pvc" | awk '{print $2}'
       register: pvSize
 
     - name: Setting PersistentVolumeName (etcd)
@@ -139,7 +139,7 @@
 #  shell: >
 #    {{ bin_dir }}/kubectl create secret generic mysql-pass
 #    --from-file={{ kubesphere_dir }}/common/password.txt
-#    -n klc-system
+#    -n default
 #  register: import
 #  failed_when: "import.stderr and 'already exists' not in import.stderr"
 
@@ -147,7 +147,7 @@
   block:
     - name: KubeSphere | Deploying etcd and mysql
       shell: >
-        {{ bin_dir }}/kubectl -n klc-system apply -f {{ kubesphere_dir }}/common/{{ item }}
+        {{ bin_dir }}/kubectl -n default apply -f {{ kubesphere_dir }}/common/{{ item }}
       loop:
         - "etcd.yaml"
         - "mysql.yaml"

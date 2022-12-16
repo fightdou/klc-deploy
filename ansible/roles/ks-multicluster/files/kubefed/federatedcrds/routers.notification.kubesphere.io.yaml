@@ -3,7 +3,7 @@ apiVersion: core.kubefed.io/v1beta1
 kind: FederatedTypeConfig
 metadata:
   name: routers.notification.kubesphere.io
-  namespace: kube-federation-system
+  namespace: default
 spec:
   federatedType:
     group: types.kubefed.io

@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: minio
-  namespace: klc-system
+  namespace: default
   labels:
     app: kubesphere
     tier: minio
@@ -23,7 +23,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: minio-pvc
-  namespace: klc-system
+  namespace: default
   labels:
     app: kubesphere
     tier: minio
@@ -46,7 +46,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: minio
-  namespace: klc-system
+  namespace: default
   labels:
     app: kubesphere
     tier: minio

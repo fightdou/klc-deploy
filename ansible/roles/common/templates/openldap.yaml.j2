@@ -6,7 +6,7 @@ metadata:
     app: openldap
     tier: database
   name: openldap
-  namespace: klc-system
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -79,7 +79,7 @@ metadata:
     app: openldap
     tier: database
   name: openldap
-  namespace: klc-system
+  namespace: default
 spec:
   ports:
   - name: ldap
@@ -98,7 +98,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: openldap-pvc
-  namespace: klc-system
+  namespace: default
 spec:
   accessModes:
   - ReadWriteOnce

@@ -71,13 +71,13 @@ common:
   minio:
     volumeSize: 20Gi
   monitoring:
-    endpoint: http://prometheus-operated.klc-monitoring-system.svc:9090
+    endpoint: http://prometheus-operated.default.svc:9090
 
 openpitrix:
   store:
     enabled: false
 multicluster:
-  clusterRole: none
+  clusterRole: host
 adminPassword: "Troila12#$"
 # Use proxycommand if bastion host is in group all
 # This change obseletes editing ansible.cfg file depending on bastion existance

@@ -17,28 +17,28 @@
 - name: KubeSphere | Checking old openldap status
   shell: >
     {{ bin_dir }}/kubectl get pod
-    -n klc-system
+    -n default
     -l app=openldap,tier=database,version=openldap-2.4 | wc -l
   register: old_openldap_exist
 
 - name: KubeSphere | Shutdown ks-account
   shell: >
-    {{ bin_dir }}/kubectl -n klc-system scale deployment ks-account --replicas=0
+    {{ bin_dir }}/kubectl -n default scale deployment ks-account --replicas=0
   when:
     - old_openldap_exist.stdout != "0"
 
 - name: KubeSphere | Deleting and backup old openldap svc
   shell: >
-    {{ bin_dir }}/kubectl get svc -n klc-system openldap -o yaml > {{ kubesphere_dir }}/openldap-svc-backup.yaml
+    {{ bin_dir }}/kubectl get svc -n default openldap -o yaml > {{ kubesphere_dir }}/openldap-svc-backup.yaml
     &&
-    {{ bin_dir }}/kubectl delete svc -n klc-system openldap
+    {{ bin_dir }}/kubectl delete svc -n default openldap
   when:
     - old_openldap_exist.stdout != "0"
 
 
 - name: KubeSphere | Checking openldap
   shell: >
-    {{ bin_dir }}/helm list -n klc-system | grep "ks-openldap"
+    {{ bin_dir }}/helm list -n default | grep "ks-openldap"
   register: openldap_check
   failed_when: false
 
@@ -49,7 +49,7 @@
     {{ kubesphere_dir }}/openldap-ha
     -f {{ kubesphere_dir }}/custom-values-openldap.yaml
     --set fullnameOverride=openldap
-    --namespace klc-system
+    --namespace default
   when:
     - (openldap_check.stdout.find("deployed") == -1) or (openldap_check.stdout.find("1.0") == -1)
 
@@ -60,7 +60,7 @@
 
 - name: KubeSphere | Restarting ks-account
   shell: >
-    {{ bin_dir }}/kubectl -n klc-system scale deployment ks-account --replicas=1
+    {{ bin_dir }}/kubectl -n default scale deployment ks-account --replicas=1
   when:
     - old_openldap_exist.stdout != "0"
 
@@ -70,7 +70,7 @@
     {{ bin_dir }}/kubectl patch cc ks-installer
     --type merge
     -p '{"status": {"openldap": {"status": "enabled", "enabledTime": "{{ lookup('pipe','date  +%Y-%m-%dT%H:%M:%S%Z') }}"}}}'
-    -n klc-system
+    -n default
   register: cc_result
   failed_when: "cc_result.stderr and 'Warning' not in cc_result.stderr"
   until: cc_result is succeeded

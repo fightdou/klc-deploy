@@ -69,7 +69,7 @@ spec:
                 values:
                 - ks-console
             namespaces:
-            - klc-system
+            - default
 {{- with .Values.nodeAffinity }}
         nodeAffinity:
 {{ toYaml . | indent 10 }}

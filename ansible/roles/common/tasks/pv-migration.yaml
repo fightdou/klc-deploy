@@ -37,5 +37,5 @@
 - name: KubeSphere | Patching PersistentVolume
   shell: >
     kubectl patch pv $(kubectl get pv | grep "{{ item.op }}" | awk '{print $1}')
-    -p '{"spec":{"claimRef": {"name": "{{ item.ks }}", "namespace": "klc-system", "resourceVersion": "", "uid": ""}}}'
+    -p '{"spec":{"claimRef": {"name": "{{ item.ks }}", "namespace": "default", "resourceVersion": "", "uid": ""}}}'
 

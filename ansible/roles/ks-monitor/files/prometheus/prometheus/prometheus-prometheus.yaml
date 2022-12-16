@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/part-of: kube-prometheus
     app.kubernetes.io/version: 2.34.0
   name: k8s
-  namespace: klc-monitoring-system
+  namespace: default
 spec:
   affinity:
     nodeAffinity:
@@ -28,14 +28,14 @@ spec:
               app.kubernetes.io/name: prometheus
               app.kubernetes.io/part-of: kube-prometheus
           namespaces:
-          - klc-monitoring-system
+          - default
           topologyKey: kubernetes.io/hostname
         weight: 100
   alerting:
     alertmanagers:
     - apiVersion: v2
       name: alertmanager-main
-      namespace: klc-monitoring-system
+      namespace: default
       port: web
   enableFeatures: []
   evaluationInterval: 1m

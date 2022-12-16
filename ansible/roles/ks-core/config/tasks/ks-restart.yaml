@@ -58,7 +58,7 @@
 
     - name: Alerting | Getting migration job status
       shell: >
-        {{ bin_dir }}/kubectl get pod -n klc-system -l job-name=ks-alerting-migration --no-headers | awk '{print $3}'
+        {{ bin_dir }}/kubectl get pod -n default -l job-name=ks-alerting-migration --no-headers | awk '{print $3}'
       register: job_status
       until: job_status.stdout.find('Completed') != -1
       retries: 90

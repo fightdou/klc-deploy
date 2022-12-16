@@ -8,6 +8,6 @@ metadata:
     prometheus: k8s
     role: alert-rules
   name: kube-prometheus-rules
-  namespace: klc-monitoring-system
+  namespace: default
 spec:
   groups: []

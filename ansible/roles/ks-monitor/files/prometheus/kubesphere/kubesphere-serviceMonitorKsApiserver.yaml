@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/part-of: kube-prometheus
     app.kubernetes.io/vendor: kubesphere
   name: ks-apiserver
-  namespace: klc-monitoring-system
+  namespace: default
 spec:
   endpoints:
   - interval: 1m
@@ -17,7 +17,7 @@ spec:
     targetPort: 9090
   namespaceSelector:
     matchNames:
-    - klc-system
+    - default
   selector:
     matchLabels:
       app: ks-apiserver

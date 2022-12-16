@@ -172,78 +172,78 @@ apiVersion: autoscaling.k8s.io/v1beta2
 kind: VerticalPodAutoscaler
 metadata:
   name: ks-account-vpa
-  namespace: klc-system
+  namespace: default
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
     name: ks-account
-    namespace: klc-system
+    namespace: default
 
 ---
 apiVersion: autoscaling.k8s.io/v1beta2
 kind: VerticalPodAutoscaler
 metadata:
   name: ks-apigateway-vpa
-  namespace: klc-system
+  namespace: default
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
     name: ks-apigateway
-    namespace: klc-system
+    namespace: default
 
 ---
 apiVersion: autoscaling.k8s.io/v1beta2
 kind: VerticalPodAutoscaler
 metadata:
   name: ks-apiserver-vpa
-  namespace: klc-system
+  namespace: default
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
     name: ks-apiserver
-    namespace: klc-system
+    namespace: default
 
 ---
 apiVersion: autoscaling.k8s.io/v1beta2
 kind: VerticalPodAutoscaler
 metadata:
   name: ks-console-vpa
-  namespace: klc-system
+  namespace: default
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
     name: ks-console
-    namespace: klc-system
+    namespace: default
 
 ---
 apiVersion: autoscaling.k8s.io/v1beta2
 kind: VerticalPodAutoscaler
 metadata:
   name: openldap-vpa
-  namespace: klc-system
+  namespace: default
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
     name: openldap
-    namespace: klc-system
+    namespace: default
 
 ---
 apiVersion: autoscaling.k8s.io/v1beta2
 kind: VerticalPodAutoscaler
 metadata:
   name: redis-vpa
-  namespace: klc-system
+  namespace: default
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
     name: redis
-    namespace: klc-system
+    namespace: default
 
 ---
 apiVersion: autoscaling.k8s.io/v1beta2
@@ -276,39 +276,39 @@ apiVersion: autoscaling.k8s.io/v1beta2
 kind: VerticalPodAutoscaler
 metadata:
   name: kube-state-metrics-vpa
-  namespace: klc-monitoring-system
+  namespace: default
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
     name: kube-state-metrics
-    namespace: klc-monitoring-system
+    namespace: default
 
 ---
 apiVersion: autoscaling.k8s.io/v1beta2
 kind: VerticalPodAutoscaler
 metadata:
   name: ks-prometheus-operator-vpa
-  namespace: klc-monitoring-system
+  namespace: default
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
     name: prometheus-operator
-    namespace: klc-monitoring-system
+    namespace: default
 
 ---
 apiVersion: autoscaling.k8s.io/v1beta2
 kind: VerticalPodAutoscaler
 metadata:
   name: ks-prometheus-k8s-vpa
-  namespace: klc-monitoring-system
+  namespace: default
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: StatefulSet
     name: prometheus-k8s
-    namespace: klc-monitoring-system
+    namespace: default
 
 ---
 apiVersion: autoscaling.k8s.io/v1beta2

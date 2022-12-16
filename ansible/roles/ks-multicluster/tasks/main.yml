@@ -43,7 +43,7 @@
       shell: /kubectl apply -f {{ helm_charts_dir }}/kubefed/kubefed/charts/controllermanager/crds/
       ignore_errors: true
 
-    - name: Kubefed | Initing kube-federation-system
+    - name: Kubefed | Initing default
       shell: helm upgrade --install kubefed {{ helm_charts_dir }}/kubefed/kubefed
         -f /etc/kubernetes/plugins/kubefed/custom-values-kubefed.yaml
         --namespace {{ helm_install_namespace }} --wait --timeout 1800s
