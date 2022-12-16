@@ -2,7 +2,7 @@
 # Kubernetes options
 ####################
 # k8s 集群 VIP 配置
-kube_apiserver_vip: 10.2.36.229
+kube_apiserver_vip: 172.26.141.88
 # k8s 集群域名
 kubernetes_domain_name: kunlun.cluster.local
 # k8s 集群 VIP 端口
@@ -35,6 +35,9 @@ node_role_value: enabled
 docker_image_path : /opt/offline/kunlunyun-2.0.0.tar.gz
 docker_dpkg_path: /opt/offline/deb-packages
 ks_image_pull_policy: IfNotPresent
+docker_register_domain: 172.18.28.6
+docker_register_port: 80
+
 
 ##############
 # Helm options
@@ -42,6 +45,15 @@ ks_image_pull_policy: IfNotPresent
 helm_install_namespace: default
 helm_charts_dir: /opt/helm-charts
 helm_wait_timeout: 600s
+
+################
+# Harbor options
+################
+enable_docker_auth: true
+harbor_username: admin
+harbor_password: Harbor12345
+harbor_address: 172.18.28.6
+docker_register_secrets_name: docker-register-secrets
 
 ####################
 # openpitrix options
@@ -92,6 +104,8 @@ enable_kube_master: true
 enable_kube_worker: true
 enable_mariadb: true
 enable_redis: true
+enable_lvm: false
+enable_ceph: true
 
 
 ##################
