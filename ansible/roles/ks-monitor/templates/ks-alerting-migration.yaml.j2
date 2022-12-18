@@ -21,7 +21,7 @@ spec:
     spec:
       initContainers:
         - name: wait-mysql
-          image: {{ kube_image_repository }}:{{ kube_image_tag }}
+          image: {{ kube_image_repository }}/alpine:{{ kube_image_tag }}
           imagePullPolicy: IfNotPresent
           command: ['sh', '-c', 'until nc -z mysql.{{ helm_install_namespace }}.svc 3306; do echo "waiting for mysql"; sleep 2; done;']
         - name: wait-apiserver
@@ -32,6 +32,6 @@ spec:
         - image: {{ kube_image_repository }}/ks-alerting-migration:{{ kube_image_tag }}
           imagePullPolicy: IfNotPresent
           name: ks-alerting-migration
-      serviceAccount: kubesphere
-      serviceAccountName: kubesphere
+      serviceAccount: klc
+      serviceAccountName: klc
       restartPolicy: OnFailure

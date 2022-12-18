@@ -5,7 +5,6 @@ metadata:
     app.kubernetes.io/component: exporter
     app.kubernetes.io/name: node-exporter
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: {{ node_exporter_tag }}
   name: node-exporter
   namespace: {{ helm_install_namespace }}
 spec:
@@ -20,7 +19,6 @@ spec:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: node-exporter
         app.kubernetes.io/part-of: kube-prometheus
-        app.kubernetes.io/version: {{ node_exporter_tag }}
     spec:
       affinity:
         nodeAffinity:
@@ -69,7 +67,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        image: {{ kube_rbac_proxy_repo }}:{{ kube_rbac_proxy_tag }}
+        image: {{ kube_image_repository }}/kube-rbac-proxy:{{ kube_image_tag }}
         name: kube-rbac-proxy
         ports:
         - containerPort: {{ monitoring.node_exporter.port | default("9100") }}

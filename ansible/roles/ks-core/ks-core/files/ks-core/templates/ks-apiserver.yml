@@ -44,7 +44,7 @@ spec:
         - mountPath: /etc/kubesphere/ingress-controller
           name: ks-router-config
         - mountPath: /etc/kubesphere/
-          name: kubesphere-config
+          name: klc-config
         - mountPath: /etc/localtime
           name: host-time
           readOnly: true
@@ -95,8 +95,8 @@ spec:
         name: ks-router-config
       - configMap:
           defaultMode: 420
-          name: kubesphere-config
-        name: kubesphere-config
+          name: klc-config
+        name: klc-config
       - hostPath:
           path: /etc/localtime
           type: ""

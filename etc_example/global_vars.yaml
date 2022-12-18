@@ -71,7 +71,7 @@ docker_register_secrets_name: docker-register-secrets
 ####################
 # openpitrix options
 ####################
-harbor_chart_url: 
+harbor_chart_url: https://kungze.github.io/kolla-helm
 
 
 #####################
@@ -107,7 +107,8 @@ adminPassword: "Troila12#$"
 kube_config_dir: /etc/kubernetes
 kube_cert_dir: "{{ kube_config_dir }}/ssl"
 kube_addons_dir: "{{ kube_config_dir }}/addons"
-
+devops:
+  enabled: false
 
 #################
 # role开关
@@ -122,6 +123,7 @@ enable_ceph: true
 enable_common: true
 enable_kubesphere: true
 enable_monitor: true
+enable_openpitrix: true
 
 ##################
 #  csi Options

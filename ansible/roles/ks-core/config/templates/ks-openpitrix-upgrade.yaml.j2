@@ -17,7 +17,7 @@ spec:
         component: openpitrix-upgrade-job
         version: v3.2.0
     spec:
-      serviceAccountName: kubesphere
+      serviceAccountName: klc
       restartPolicy: OnFailure
       containers:
         - name: upgrade
@@ -25,12 +25,12 @@ spec:
             - sh
             - -c
             - upgrade && import-app import
-          image: {{ openpitrix_job_repo }}:{{ openpitrix_job_tag }}
+          image: {{ kube_image_repository }}/openpitrix-jobs:{{ kube_image_tag }}
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: /etc/kubesphere
-              name: kubesphere-config
+              name: klc-config
       volumes:
-        - name: kubesphere-config
+        - name: klc-config
           configMap:
-            name: kubesphere-config
+            name: klc-config

@@ -7,7 +7,7 @@ data:
       loginHistoryRetentionPeriod: {{ authentication.loginHistoryRetentionPeriod | default("168h") }}
       maximumClockSkew: {{ authentication.maximumClockSkew | default("10s") }}
       multipleLogin: {{ common.core.console.enableMultiLogin | default(true) }}
-      kubectlImage: {{ ks_kubectl_repo }}:{{ ks_kubectl_tag }}
+      kubectlImage: {{ kube_image_repository }}/kubectl:{{ kube_image_tag }}
       jwtSecret: "{{ ks_secret_str.stdout }}"
       oauthOptions:
 {% if authentication.oauthOptions is defined %}
@@ -21,13 +21,13 @@ data:
           secret: kubesphere
           redirectURIs:
           - '*'
-{% if (common.openldap is defined and common.openldap.enabled is defined and common.openldap.enabled) or devops.enabled %}
+{% if common.openldap is defined and common.openldap.enabled is defined and common.openldap.enabled %}
     ldap:
       host: openldap.default.svc:389
-      managerDN: cn=admin,dc=kubesphere,dc=io
+      managerDN: cn=admin,dc=troila,dc=io
       managerPassword: admin
-      userSearchBase: ou=Users,dc=kubesphere,dc=io
-      groupSearchBase: ou=Groups,dc=kubesphere,dc=io
+      userSearchBase: ou=Users,dc=troila,dc=io
+      groupSearchBase: ou=Groups,dc=troila,dc=io
 {% endif %}
 {% if (common.redis is defined and common.redis.enabled is defined and common.redis.enabled) or (enableHA is defined and enableHA) %}
     redis:
@@ -106,7 +106,7 @@ data:
 {% endif %}
 {% if multicluster.clusterRole is defined and multicluster.clusterRole == "host" %}
       enable: true
-      agentImage: {{ tower_repo }}/{{ tower_image }}:{{ tower_image_tag }}
+      agentImage: {{ kube_image_repository }}/tower:{{ kube_image_tag }}
       proxyPublishService: tower.default.svc
 {% if multicluster.proxyPublishAddress is defined and multicluster.proxyPublishAddress != "" %}
       proxyPublishAddress: {{ multicluster.proxyPublishAddress }}
@@ -248,15 +248,15 @@ data:
 
 {% if terminal is defined %}
     terminal:
-      image: {{ terminal.image | default(alpine_repo + ':' + alpine_tag|string) }}
+      image: {{ kube_image_repository }}/alpine:{{ kube_image_tag }}
 {% if terminal.timeout is defined %}
       timeout: {{ terminal.timeout }}
 {% endif %}
 {% endif %}
     gateway:
       watchesPath: /var/helm-charts/watches.yaml
-      repository: {{ nginx_ingress_controller_repo }}
-      tag: {{ nginx_ingress_controller_tag }}
+      repository: {{ kube_image_repository }}/nginx-ingress-controller
+      tag: {{ kube_image_tag }}
 {% if gateway is defined and gateway.namespace is defined %}
       namespace: {{ gateway.namespace }}
 {% else %}
@@ -264,5 +264,5 @@ data:
 {% endif %}
 kind: ConfigMap
 metadata:
-  name: kubesphere-config
+  name: klc-config
   namespace: default

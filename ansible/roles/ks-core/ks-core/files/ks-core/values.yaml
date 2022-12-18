@@ -36,7 +36,7 @@ image:
 
 
 config:
-  # Specifies whether the kubesphere-config configmap should be created
+  # Specifies whether the klc-config configmap should be created
   create: true
   authentication: {}
   # Jwt Secret is required by ks-apiserver, a random string would be generated if it's empty

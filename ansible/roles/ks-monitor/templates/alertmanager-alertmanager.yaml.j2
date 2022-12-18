@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/instance: main
     app.kubernetes.io/name: alertmanager
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: {{ alertmanager_tag | replace("v", "") }}
+    app.kubernetes.io/version: {{ kube_image_tag | replace("v", "") }}
   name: main
   namespace: {{ helm_install_namespace }}
 spec:
@@ -51,14 +51,14 @@ spec:
 {% else %}
   tolerations: []
 {% endif %}
-  image: {{ alertmanager_repo }}:{{ alertmanager_tag }}
+  image: {{ kube_image_repository }}/alertmanager:{{ kube_image_tag }}
   podMetadata:
     labels:
       app.kubernetes.io/component: alert-router
       app.kubernetes.io/instance: main
       app.kubernetes.io/name: alertmanager
       app.kubernetes.io/part-of: kube-prometheus
-      app.kubernetes.io/version: {{ alertmanager_tag | replace("v", "") }}
+      app.kubernetes.io/version: {{ kube_image_tag | replace("v", "") }}
   resources:
     limits:
       cpu: {{ monitoring.alertmanager.resources.limits.cpu | default(monitoring.alertmanager.limits.cpu) | default("200m") }}
@@ -77,4 +77,4 @@ spec:
     runAsNonRoot: true
     runAsUser: 1000
   serviceAccountName: alertmanager-main
-  version: {{ alertmanager_tag }}
+  version: {{ kube_image_tag }}

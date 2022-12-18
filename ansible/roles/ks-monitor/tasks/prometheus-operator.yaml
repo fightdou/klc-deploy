@@ -1,9 +1,6 @@
 ---
 - name: Monitoring | Initing prometheus-operator (crds)
-  shell: >
-    kubectl apply -f {{ helm_charts_dir }}/prometheus/prometheus-operator/*CustomResourceDefinition.yaml || 
-    kubectl apply -f {{ helm_charts_dir }}/prometheus/prometheus-operator/*CustomResourceDefinition.yaml --force-conflicts --server-side || 
-    kubectl replace -f {{ helm_charts_dir }}/prometheus/prometheus-operator/*CustomResourceDefinition.yaml
+  shell: kubectl apply -f {{ helm_charts_dir }}/prometheus/prometheus-operator
   register: prom_result
   failed_when: "prom_result.stderr and 'Warning' not in prom_result.stderr and 'spec.clusterIP' not in prom_result.stderr"
   until: prom_result is succeeded
@@ -11,7 +8,7 @@
   delay: 3
 
 - name: Monitoring | Initing prometheus-operator (resources)
-  shell: "kubectl apply -f {{ helm_charts_dir }}/prometheus/prometheus-operator/*.yaml --force || kubectl apply -f {{ helm_charts_dir }}/prometheus/prometheus-operator/*.yaml --force-conflicts --server-side"
+  shell: "kubectl apply -f {{ helm_charts_dir }}/prometheus/prometheus-operator --force"
   register: prom_result
   failed_when: "prom_result.stderr and 'Warning' not in prom_result.stderr and 'spec.clusterIP' not in prom_result.stderr"
   until: prom_result is succeeded

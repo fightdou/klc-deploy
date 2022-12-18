@@ -121,4 +121,4 @@ spec:
           requests:
             storage: {% if prometheus_pv_size is defined %}{{ prometheus_pv_size }}{% else %}{{ monitoring.prometheus.volumeSize | default(monitoring.prometheusVolumeSize) | default("20Gi") }}{% endif %}
 
-  version: {{ prometheus_tag }}
+  version: {{ kube_image_tag }}

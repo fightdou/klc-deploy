@@ -1,15 +1,15 @@
 ---
-- name: 创建 trochilus values 目录
+- name: 创建 notification-manager values 目录
   file:
     name: /etc/kubernetes/plugins/notification-manager
     state: directory
 
-- name: notification-manager | Getting notification-manager installation files
+- name: notification-manager | Create notification-manager installation files
   copy:
     src: "notification-manager"
     dest: "{{ helm_charts_dir }}/"
 
-- name: notification-manager | Getting notification-manager installation files
+- name: notification-manager | Create notification-manager template files
   template:
     src: "custom-values-notification.yaml.j2"
     dest: "/etc/kubernetes/plugins/notification-manager/custom-values-notification.yaml"
@@ -29,6 +29,3 @@
   until: deploy_result is succeeded
   retries: 3
   delay: 10
-  when:
-    - notification_check.rc == 0
-    - notification_check.stdout.find("2.1.0-rc.1") == -1

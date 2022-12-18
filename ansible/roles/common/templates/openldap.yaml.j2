@@ -22,9 +22,9 @@ spec:
       containers:
       - env:
         - name: LDAP_ORGANISATION
-          value: kubesphere
+          value: troila
         - name: LDAP_DOMAIN
-          value: kubesphere.io
+          value: troila.io
         - name: LDAP_ADMIN_PASSWORD
           value: admin
         - name: LDAP_NOFILE
@@ -108,4 +108,3 @@ spec:
   resources:
     requests:
       storage: {{ common.openldapVolumeSize }}
-

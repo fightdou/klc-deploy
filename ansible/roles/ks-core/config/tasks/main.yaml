@@ -2,12 +2,12 @@
 - block:
   - name: KubeSphere | Getting sonarqube host
     shell: >
-      kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "host" | awk '{print $2}'
+      kubectl get cm -n default klc-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "host" | awk '{print $2}'
     register: sonarqube_host
 
   - name: KubeSphere | Getting sonarqube token
     shell: >
-      kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "token" | awk '{print $2}'
+      kubectl get cm -n default klc-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "token" | awk '{print $2}'
     register: sonarqube_token
   when:
     - devops.sonarqube is not defined
@@ -30,7 +30,7 @@
 - block:
   - name: KubeSphere | Getting es index prefix
     shell: >
-      kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "logging:" -A 2 | grep "indexPrefix" | awk '{print $2}'
+      kubectl get cm -n default klc-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "logging:" -A 2 | grep "indexPrefix" | awk '{print $2}'
     register: es_indexPrefix
 
 - set_fact:
@@ -47,18 +47,6 @@
   shell: >
     kubectl get secret kubesphere-secret -o jsonpath='{.data.secret}' | base64 -d
   register: ks_secret_str
-
-# Get the matched kubectl image
-- name: KubeSphere | Setting kubectl image version
-  set_fact:
-    ks_kubectl_tag: "{{ item.value }}"
-    kubectl_break: true
-  loop: "{{ query('dict', ks_kubectl_versions) }}"
-  when:
-    - kubectl_break is undefined and kubernetes_version is defined and kubernetes_version is version(item.key, '>=')
-
-- debug:
-    msg: Current kubectl image version is {{ ks_kubectl_tag }}
 
 - name: KubeSphere | Getting Kubernetes master num
   shell: >
@@ -86,14 +74,14 @@
 
 - name: KubeSphere | Creating manifests
   template:
-    src: "kubesphere-config.yaml.j2"
-    dest: "/etc/kubernetes/plugins/ks-core/kubesphere-config.yaml"
+    src: "klc-config.yaml.j2"
+    dest: "/etc/kubernetes/plugins/ks-core/klc-config.yaml"
 
 
 - name: KubeSphere | Initing KubeSphere
-  shell: "kubectl apply -f /etc/kubernetes/plugins/ks-core/kubesphere-config.yaml"
+  shell: "kubectl apply -f /etc/kubernetes/plugins/ks-core/klc-config.yaml"
   loop:
-    - "kubesphere-config.yaml"
+    - "klc-config.yaml"
   register: init_result
   failed_when: "init_result.stderr and 'already exists' not in init_result.stderr"
 
