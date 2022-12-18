@@ -74,15 +74,11 @@
 
 - name: KubeSphere | Creating manifests
   template:
-    src: "klc-config.yaml.j2"
-    dest: "/etc/kubernetes/plugins/ks-core/klc-config.yaml"
+    src: "kubesphere-config.yaml.j2"
+    dest: "/etc/kubernetes/plugins/ks-core/kubesphere-config.yaml"
 
 
 - name: KubeSphere | Initing KubeSphere
-  shell: "kubectl apply -f /etc/kubernetes/plugins/ks-core/klc-config.yaml"
-  loop:
-    - "klc-config.yaml"
-  register: init_result
-  failed_when: "init_result.stderr and 'already exists' not in init_result.stderr"
+  shell: "kubectl apply -f /etc/kubernetes/plugins/ks-core/kubesphere-config.yaml"
 
 - import_tasks: ks-restart.yaml

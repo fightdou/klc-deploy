@@ -13,20 +13,6 @@
     - "kubefed"
   delegate_to: "{{ groups['kube-master'][0] }}"
 
-# Get the matched kubectl image
-- name: KubeSphere | Setting kubectl image version
-  set_fact:
-    ks_kubectl_tag: "{{ item.value }}"
-    kubectl_break: true
-  loop: "{{ query('dict', ks_kubectl_versions) }}"
-  when:
-    - kubectl_break is undefined and kubernetes_version is defined and kubernetes_version is version(item.key, '>=')
-  delegate_to: "{{ groups['kube-master'][0] }}"
-
-- debug:
-    msg: Current kubectl image version is {{ ks_kubectl_tag }}
-  delegate_to: "{{ groups['kube-master'][0] }}"
-
 - name: Kubefed | Creating custom-values-kubefed.yaml
   template:
     src: "custom-values-kubefed.yaml.j2"
@@ -46,7 +32,7 @@
       failed_when: false
 
     - name: Kubefed | Upgrade crd manually #see https://helm.sh/docs/chart_best_practices/custom_resource_definitions/
-      shell: /kubectl apply -f {{ helm_charts_dir }}/kubefed/kubefed/charts/controllermanager/crds/
+      shell: kubectl apply -f {{ helm_charts_dir }}/kubefed/kubefed/charts/controllermanager/crds/
       ignore_errors: true
 
     - name: Kubefed | Initing default
@@ -60,14 +46,6 @@
 
     - name: Kubfed | Labeling default namespace
       shell: kubectl label namespace {{ helm_install_namespace }} kubesphere.io/workspace=system-workspace --overwrite
-  delegate_to: "{{ groups['kube-master'][0] }}"
-  
-- name: KubeSphere | Checking kubefed-admission-webhook status
-  wait_for:
-    host: "kubefed-admission-webhook.{{ helm_install_namespace }}.svc"
-    port: 443
-    delay: 5
-    timeout: 1800
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Kubefed | Creating MultiCluster crds

@@ -124,6 +124,7 @@ enable_common: true
 enable_kubesphere: true
 enable_monitor: true
 enable_openpitrix: true
+enable_multicluster: true
 
 ##################
 #  csi Options
