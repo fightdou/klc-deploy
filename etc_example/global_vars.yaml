@@ -81,6 +81,7 @@ persistence:
   storageClass: "general"
 authentication:
   jwtSecret: ""
+  adminPassword: "Troila12#$"
 common:
   core:
     console:

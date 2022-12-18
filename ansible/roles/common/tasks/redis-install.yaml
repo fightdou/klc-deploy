@@ -15,7 +15,7 @@
     - name: KubeSphere | Getting redis installation files
       copy:
         src: "{{ item }}"
-        dest: "{{ kubesphere_dir }}/"
+        dest: "{{ helm_charts_dir }}/"
       loop:
         - "redis-ha"
 
@@ -23,7 +23,7 @@
     - name: KubeSphere | Creating manifests
       template:
         src: "{{ item.file }}.j2"
-        dest: "{{ kubesphere_dir }}/{{ item.file }}"
+        dest: "{{ helm_charts_dir }}/{{ item.file }}"
       with_items:
         - { name: custom-values-redis, file: custom-values-redis.yaml }
 
@@ -36,7 +36,7 @@
 
     - name: KubeSphere | Deleting and backup old redis svc
       shell: >
-        kubectl get svc -n default redis -o yaml > {{ kubesphere_dir }}/redis-svc-backup.yaml
+        kubectl get svc -n default redis -o yaml > {{ helm_charts_dir }}/redis-svc-backup.yaml
         &&
         kubectl delete svc -n default redis
       when:
@@ -46,8 +46,8 @@
     - name: KubeSphere | Deploying redis
       shell: >
         helm upgrade --install ks-redis
-        {{ kubesphere_dir }}/redis-ha
-        -f {{ kubesphere_dir }}/custom-values-redis.yaml
+        {{ helm_charts_dir }}/redis-ha
+        -f {{ helm_charts_dir }}/custom-values-redis.yaml
         --set fullnameOverride=redis-ha
         --namespace default
 
@@ -57,7 +57,7 @@
 
 - name: KubeSphere | Deploying redis
   shell: >
-    kubectl -n default apply -f {{ kubesphere_dir }}/common/{{ item }}
+    kubectl -n default apply -f {{ helm_charts_dir }}/common/{{ item }}
   loop:
     - "redis.yaml"
   register: redis_result

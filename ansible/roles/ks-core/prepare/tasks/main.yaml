@@ -58,7 +58,7 @@
 
 - name: KubeSphere | Creating KubeSphere directory
   file:
-    path: "{{ kubesphere_dir }}"
+    path: "{{ helm_charts_dir }}"
     state: directory
     mode: 0755
   delegate_to: "{{ groups['kube-master'][0] }}"
@@ -66,13 +66,13 @@
 - name: KubeSphere | Getting installation init files
   copy:
     src: "{{ item }}"
-    dest: "{{ kubesphere_dir }}/"
+    dest: "{{ helm_charts_dir }}/"
   loop:
     - "ks-init"
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Initing KubeSphere
-  shell: "kubectl apply -f {{ kubesphere_dir }}/ks-init/{{ item }}"
+  shell: "kubectl apply -f {{ helm_charts_dir }}/ks-init/{{ item }}"
   loop:
     - "role-templates.yaml"
   register: init_ks_result
@@ -81,7 +81,7 @@
 
 - name: KubeSphere | Generating kubeconfig-admin
   shell: >
-    /bin/bash {{ kubesphere_dir }}/ks-init/generate-kubeconfig.sh
+    /bin/bash {{ helm_charts_dir }}/ks-init/generate-kubeconfig.sh
   when:
     - openpitrix.enabled is defined and openpitrix.enabled
   delegate_to: "{{ groups['kube-master'][0] }}"
