@@ -17,14 +17,6 @@ image:
   nginx_ingress_controller_tag: {{ kube_image_tag }}
   defaultbackend_repo: {{ kube_image_repository }}/defaultbackend-arm64
   defaultbackend_tag: {{ kube_image_tag }}
-  bookinfo_productpage_v1_repo: {{ bookinfo_productpage_v1_repo }}
-  bookinfo_productpage_v1_tag: {{ kube_image_tag }}
-  bookinfo_reviews_v1_repo: {{ bookinfo_reviews_v1_repo }}
-  bookinfo_reviews_v1_tag: {{ bookinfo_reviews_v1_tag }}
-  bookinfo_details_v1_repo: {{ bookinfo_details_v1_repo }}
-  bookinfo_details_v1_tag: {{ bookinfo_details_v1_tag }}
-  bookinfo_ratings_v1_repo: {{ bookinfo_ratings_v1_repo }}
-  bookinfo_ratings_v1_tag: {{ bookinfo_ratings_v1_tag }}
   pullPolicy: {{ ks_image_pull_policy }}
 
 
@@ -35,7 +27,7 @@ serviceAccount:
   name: "klc"
 
 config:
-  create: false
+  create: true
 
 adminPassword: {% if adminPassword is defined %}"{{ adminPassword }}"{% else %}""{% endif %}
 

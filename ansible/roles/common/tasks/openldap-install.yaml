@@ -15,20 +15,8 @@
 - name: KubeSphere | Deploying openldap
   shell: >
     helm upgrade --install ks-openldap
-    {{ kubesphere_dir }}/openldap-ha
+    {{ helm_charts_dir }}/openldap-ha
     -f /etc/kubernetes/plugins/common/custom-values-openldap.yaml.j2
     --set fullnameOverride=openldap
     --namespace default
     --wait --timeout 1800s
-
-- name: KubeSphere | Importing openldap status
-  shell: >
-    kubectl patch cc ks-installer
-    --type merge
-    -p '{"status": {"openldap": {"status": "enabled", "enabledTime": "{{ lookup('pipe','date  +%Y-%m-%dT%H:%M:%S%Z') }}"}}}'
-    -n default
-  register: cc_result
-  failed_when: "cc_result.stderr and 'Warning' not in cc_result.stderr"
-  until: cc_result is succeeded
-  retries: 5
-  delay: 3

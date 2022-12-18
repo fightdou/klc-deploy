@@ -56,7 +56,7 @@ spec:
               name: redis-secret
               key: auth
       containers:
-      - image: {{ redis_repo }}:{{ redis_tag }}
+      - image: {{ kube_image_repository }}/redis:{{ kube_image_tag }}
         imagePullPolicy: IfNotPresent
         name: redis
         args: ["/data/redis.conf"]

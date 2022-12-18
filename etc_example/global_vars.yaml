@@ -1,3 +1,5 @@
+enable_docker_register_domain_deploy: false
+
 ####################
 # Kubernetes options
 ####################
@@ -8,7 +10,7 @@ kubernetes_domain_name: kunlun.cluster.local
 # k8s 集群 VIP 端口
 kube_apiserver_port: 6443
 # docker 镜像 namespace
-kube_image_repository: "172.18.28.6/kubesphere"
+kube_image_repository: "172.18.28.6/kubeshpere"
 # docker 镜像 tag
 kube_image_tag: latest
 kubernetes_version: 1.23.5
@@ -38,6 +40,17 @@ ks_image_pull_policy: IfNotPresent
 docker_register_domain: 172.18.28.6
 docker_register_port: 80
 
+##############
+# Etcd options
+##############
+# Etcd 数据根目录
+etcd_data_dir: "/var/lib/etcd"
+# Etcd 每日备份时间，默认3，即凌晨3点，取值范围0-23
+etcd_backup_hour: "3"
+# Etcd 每日备份文件保留时长，默认7天
+etcd_backup_expiry: "7"
+# etcd 备份目录
+etcd_backup_dir: "/var/lib/etcd/backup"
 
 ##############
 # Helm options
@@ -106,7 +119,9 @@ enable_mariadb: true
 enable_redis: true
 enable_lvm: false
 enable_ceph: true
-
+enable_common: true
+enable_kubesphere: true
+enable_monitor: true
 
 ##################
 #  csi Options

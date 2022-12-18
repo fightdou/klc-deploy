@@ -145,7 +145,7 @@
   shell: helm upgrade --install ks-core
     {{ helm_charts_dir }}/ks-core/
     -f /etc/kubernetes/plugins/ks-core/custom-values-ks-core.yaml
-    --namespace {{ helm_install_namespace }}
+    --namespace "{{ helm_install_namespace }}"
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Creating manifests
@@ -170,17 +170,4 @@
   shell: kubectl apply -f /etc/kubernetes/plugins/ks-core/ks-upgrade.yaml
   when:
     - manager_result.stdout != "0"
-  delegate_to: "{{ groups['kube-master'][0] }}"
-
-- name: KubeSphere | Importing ks-core status
-  shell: >
-    kubectl patch cc ks-installer
-    --type merge
-    -p '{"status": {"core": {"status": "enabled", "enabledTime": "{{ lookup('pipe','date  +%Y-%m-%dT%H:%M:%S%Z') }}"}}}'
-    -n {{ helm_install_namespace }}
-  register: cc_result
-  failed_when: "cc_result.stderr and 'Warning' not in cc_result.stderr"
-  until: cc_result is succeeded
-  retries: 5
-  delay: 3
   delegate_to: "{{ groups['kube-master'][0] }}"

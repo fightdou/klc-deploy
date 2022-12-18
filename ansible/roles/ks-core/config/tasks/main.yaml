@@ -48,14 +48,6 @@
     kubectl get secret kubesphere-secret -o jsonpath='{.data.secret}' | base64 -d
   register: ks_secret_str
 
-#- name: KubeSphere | Checking Kubernetes version
-#  shell: >
-#    kubectl version -o json | jq '.serverVersion.gitVersion' | sed s/\"//g
-#  register: kubernetes_version
-
-- debug:
-    msg: Current Kubernetes version is {{ kubernetes_version }}
-
 # Get the matched kubectl image
 - name: KubeSphere | Setting kubectl image version
   set_fact:
@@ -94,14 +86,12 @@
 
 - name: KubeSphere | Creating manifests
   template:
-    src: "{{ item.file }}.j2"
-    dest: "{{ kubesphere_dir }}/{{ item.file }}"
-  with_items:
-    - { name: kubesphere-config, file: kubesphere-config.yaml, type: cm }
+    src: "kubesphere-config.yaml.j2"
+    dest: "/etc/kubernetes/plugins/ks-core/kubesphere-config.yaml"
 
 
 - name: KubeSphere | Initing KubeSphere
-  shell: "kubectl apply -f {{ kubesphere_dir }}/{{ item }}"
+  shell: "kubectl apply -f /etc/kubernetes/plugins/ks-core/kubesphere-config.yaml"
   loop:
     - "kubesphere-config.yaml"
   register: init_result
