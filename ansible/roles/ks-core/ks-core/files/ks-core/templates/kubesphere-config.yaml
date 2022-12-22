@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: klc-config
+  name: kubesphere-config
 data:
   kubesphere.yaml: |
     authentication:

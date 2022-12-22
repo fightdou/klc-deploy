@@ -9,14 +9,14 @@
 - name: KubeSphere | Creating manifests
   template:
     src: "custom-values-openldap.yaml.j2"
-    dest: "/etc/kubernetes/plugins/common/custom-values-openldap.yaml.j2"
+    dest: "/etc/kubernetes/plugins/common/custom-values-openldap.yaml"
 
 
 - name: KubeSphere | Deploying openldap
   shell: >
     helm upgrade --install ks-openldap
     {{ helm_charts_dir }}/openldap-ha
-    -f /etc/kubernetes/plugins/common/custom-values-openldap.yaml.j2
+    -f /etc/kubernetes/plugins/common/custom-values-openldap.yaml
     --set fullnameOverride=openldap
     --namespace default
     --wait --timeout 1800s

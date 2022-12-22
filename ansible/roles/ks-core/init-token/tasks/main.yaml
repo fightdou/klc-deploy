@@ -46,7 +46,7 @@
 
 - name: KubeSphere | Getting KubeSphere Token
   shell: >
-    /bin/bash {{ helm_charts_dir }}/jwt-script/jwt.sh  {{ ks_secret_str }} '{"email": "admin@kubesphere.io","username": "admin","token_type": "static_token"}'
+    /bin/bash {{ helm_charts_dir }}/jwt-script/jwt.sh  {{ ks_secret_str }} '{"email": "admin@troila.io","username": "admin","token_type": "static_token"}'
   register: ks_token
   delegate_to: "{{ groups['kube-master'][0] }}"
 

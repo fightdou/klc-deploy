@@ -18,8 +18,8 @@ service:
 ldap:
   replication: {% if enableHA is defined and enableHA %}true{% else %}false{% endif %}
 
-  organisation: troila
-  domain: troila.io
+  organisation: kubesphere
+  domain: kubesphere.io
   adminPassword: admin
 
 persistence:

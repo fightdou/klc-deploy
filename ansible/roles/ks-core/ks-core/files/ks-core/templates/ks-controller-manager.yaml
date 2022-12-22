@@ -47,7 +47,7 @@ spec:
           {{- toYaml .Values.controller.resources | nindent 12 }}
         volumeMounts:
         - mountPath: /etc/kubesphere/
-          name: klc-config
+          name: kubesphere-config
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: webhook-secret
         - mountPath: /etc/localtime
@@ -66,9 +66,9 @@ spec:
       serviceAccountName: {{ include "ks-core.serviceAccountName" . }}
       terminationGracePeriodSeconds: 30
       volumes:
-      - name: klc-config
+      - name: kubesphere-config
         configMap:
-          name: klc-config
+          name: kubesphere-config
           defaultMode: 420
       - name: webhook-secret
         secret:

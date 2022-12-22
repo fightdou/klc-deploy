@@ -2,12 +2,12 @@
 - block:
   - name: KubeSphere | Getting sonarqube host
     shell: >
-      kubectl get cm -n default klc-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "host" | awk '{print $2}'
+      kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "host" | awk '{print $2}'
     register: sonarqube_host
 
   - name: KubeSphere | Getting sonarqube token
     shell: >
-      kubectl get cm -n default klc-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "token" | awk '{print $2}'
+      kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "sonarQube:" -A 2 | grep "token" | awk '{print $2}'
     register: sonarqube_token
   when:
     - devops.sonarqube is not defined
@@ -30,7 +30,7 @@
 - block:
   - name: KubeSphere | Getting es index prefix
     shell: >
-      kubectl get cm -n default klc-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "logging:" -A 2 | grep "indexPrefix" | awk '{print $2}'
+      kubectl get cm -n default kubesphere-config -o jsonpath='{.data.kubesphere\.yaml}' | grep "logging:" -A 2 | grep "indexPrefix" | awk '{print $2}'
     register: es_indexPrefix
 
 - set_fact:

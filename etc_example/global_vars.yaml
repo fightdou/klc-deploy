@@ -81,7 +81,7 @@ persistence:
   storageClass: "general"
 authentication:
   jwtSecret: ""
-  adminPassword: "Troila12#$"
+  adminPassword: ""
 common:
   core:
     console:
@@ -104,7 +104,6 @@ openpitrix:
     enabled: true
 multicluster:
   clusterRole: host
-adminPassword: "Troila12#$"
 kube_config_dir: /etc/kubernetes
 kube_cert_dir: "{{ kube_config_dir }}/ssl"
 kube_addons_dir: "{{ kube_config_dir }}/addons"
