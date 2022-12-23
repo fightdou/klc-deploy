@@ -1,0 +1,12 @@
+---
+# - import_tasks: harbor_install.yaml
+#   run_once: True
+#   delegate_to: "{{ groups['harbor'][0] }}"
+
+- import_tasks: import_file.yaml
+  run_once: True
+  delegate_to: "{{ groups['harbor'][0] }}"
+
+- import_tasks: import_image.yaml
+  run_once: True
+  delegate_to: "{{ groups['harbor'][0] }}"

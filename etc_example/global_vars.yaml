@@ -68,6 +68,21 @@ harbor_password: Harbor12345
 harbor_address: 172.18.28.6
 docker_register_secrets_name: docker-register-secrets
 
+######################
+# Local Harbor options
+######################
+harbor_local_address: 172.27.136.208 
+harbor_local_username: admin
+harbor_local_password: Harbor12345
+harbor_local_charts_dir: /opt/offline/local-chart/
+harbor_image_version : arm 
+harbor_images: 
+  - mariadb
+  - memcached
+  - redis
+  - rabbitmq
+  - nginx
+
 ####################
 # openpitrix options
 ####################
@@ -125,6 +140,7 @@ enable_kubesphere: true
 enable_monitor: true
 enable_openpitrix: true
 enable_multicluster: true
+enable_harbor: true
 
 ##################
 #  csi Options
