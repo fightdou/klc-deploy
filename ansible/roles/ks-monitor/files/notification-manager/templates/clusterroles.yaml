@@ -19,7 +19,6 @@ rules:
   - ""
   resources:
   - secrets
-  - configmaps
   verbs:
   - get
   - list
@@ -42,8 +41,6 @@ rules:
   - configs
   - notificationmanagers
   - receivers
-  - routers
-  - silences
   verbs:
   - create
   - delete
