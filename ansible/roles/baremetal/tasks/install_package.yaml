@@ -222,3 +222,13 @@
     regexp: 'swap'
     state: absent
     backup: yes
+
+- name: create cni directory
+  file: 
+    name: "/opt/cni/bin/"
+    state: directory
+
+- name: copy file to cni directory
+  copy:
+    src: cni/*
+    dest: /opt/cni/bin/
