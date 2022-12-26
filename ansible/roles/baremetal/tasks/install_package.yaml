@@ -17,6 +17,20 @@
         {% endfor %}
   become: True
 
+- name: copy file to cni directory
+  copy:
+    src: cni
+    dest: /opt/
+    mode: "0755"
+
+- name: copy file to remote cni directory
+  copy:
+    src: /opt/cni
+    dest: /opt/cni
+    mode: "0755"
+    remote_src: "yes"
+  delegate_to: "{{ groups['baremetal'][0] }}"
+
 - name: Update apt cache
   shell: apt update -y
   register: apt_result
@@ -222,15 +236,3 @@
     regexp: 'swap'
     state: absent
     backup: yes
-
-- name: create cni directory
-  file: 
-    name: "/opt/cni/bin/"
-    state: directory
-
-- name: copy file to cni directory
-  copy:
-    src: cni/*
-    dest: /opt/cni/bin/
-    remote_src: yes
-    mode: "0755"
