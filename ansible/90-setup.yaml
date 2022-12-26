@@ -93,3 +93,13 @@
     - { role: ks-multicluster,
         tags: ks-multicluster,
         when: enable_multicluster| bool }
+
+- name: Apply role harbor
+  gather_facts: false
+  hosts:
+    - harbor
+  roles:
+    - { role: harbor,
+        tags: harbor,
+        when: enable_harbor| bool }
+

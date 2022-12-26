@@ -62,3 +62,7 @@ control
 
 [ks-multicluster:children]
 control
+
+[harbor:children]
+control
+
