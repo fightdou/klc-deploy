@@ -1,0 +1,41 @@
+- name: Delete harbor repo if exist
+  shell: helm repo remove harbor-chart-repo
+  ignore_errors: true
+  
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: harbor-chart-repo
+    repo_username: "{{ harbor_local_username }}"
+    repo_password: "{{ harbor_local_password }}"
+    repo_url: "http://{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002/chartrepo/library"
+
+- name: Gather Helm plugin info
+  kubernetes.core.helm_plugin_info:
+    plugin_name: cm-push
+  run_once: True
+  register: plugin_info
+
+- block:
+  - name: install helm plugin cm-push
+    get_url: 
+      url: https://github.com/chartmuseum/helm-push/releases/download/v0.10.3/helm-push_0.10.3_linux_arm64.tar.gz
+      dest: /root/
+      mode: 0644
+      force: yes	
+    
+  - name: unarchive cm-push file
+    unarchive:
+      src: /root/helm-push_0.10.3_linux_arm64.tar.gz
+      dest: /root/.local/share/helm/plugins/
+
+  run_once: True
+  when:
+    - plugin_info.plugin_list | length == 0
+
+- name: Find local chart
+  command: "ls {{harbor_local_charts_dir}}"
+  register: dir_out
+
+- name: Push chart to harbor
+  shell: "helm cm-push {{harbor_local_charts_dir}}/{{ item }} harbor-chart-repo"
+  with_items: "{{ dir_out.stdout_lines }}"

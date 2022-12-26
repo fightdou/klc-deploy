@@ -4,6 +4,15 @@
     "https://8xpk5wnt.mirror.aliyuncs.com"
   ],
   "insecure-registries": [
-    "{{ harbor_local_address }}:30002"
-  ]
+    "{{ docker_register_domain }}:{{ docker_register_port }}",
+    "{{ harbor_address }}",
+    "{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002"
+  ],
+  "max-concurrent-downloads": 10,
+  "log-driver": "json-file",
+  "log-level": "warn",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  }
 }

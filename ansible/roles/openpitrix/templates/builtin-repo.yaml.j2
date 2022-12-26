@@ -11,4 +11,4 @@ spec:
   credential: {}
   name: built-stable
   syncPeriod: 3600
-  url: {{ harbor_chart_url }}
+  url: "http://{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002/chartrepo/library"

@@ -4,7 +4,7 @@ enable_docker_register_domain_deploy: false
 # Kubernetes options
 ####################
 # k8s 集群 VIP 配置
-kube_apiserver_vip: 172.26.141.88
+kube_apiserver_vip: 172.27.136.210
 # k8s 集群域名
 kubernetes_domain_name: kunlun.cluster.local
 # k8s 集群 VIP 端口
@@ -71,7 +71,6 @@ docker_register_secrets_name: docker-register-secrets
 ######################
 # Local Harbor options
 ######################
-harbor_local_address: 172.27.136.208 
 harbor_local_username: admin
 harbor_local_password: Harbor12345
 harbor_local_charts_dir: /opt/offline/local-chart/
