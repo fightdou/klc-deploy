@@ -232,3 +232,5 @@
   copy:
     src: cni/*
     dest: /opt/cni/bin/
+    remote_src: yes
+    mode: "0755"
