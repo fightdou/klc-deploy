@@ -26,7 +26,7 @@
 - name: copy file to remote cni directory
   copy:
     src: /opt/cni
-    dest: /opt/cni
+    dest: /opt/
     mode: "0755"
     remote_src: "yes"
   delegate_to: "{{ groups['baremetal'][0] }}"
