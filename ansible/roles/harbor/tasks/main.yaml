@@ -1,12 +1,31 @@
 ---
-# - import_tasks: harbor_install.yaml
-#   run_once: True
-#   delegate_to: "{{ groups['harbor'][0] }}"
-
-- import_tasks: import_file.yaml
+- import_tasks: harbor_install.yaml
   run_once: True
   delegate_to: "{{ groups['harbor'][0] }}"
+
+- name: wait for pods to come up
+  shell: kubectl get pods --selector app=harbor -o json
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[0].status.phase') == "Running"
+  retries: 10
+  delay: 30
+
+- name: get harbor status
+  uri:
+    method: GET
+    url: "http://{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002/api/v2.0/ping"
+    headers:
+      accept: text/plain
+  register: api_result
+  until: api_result.status == 200
+  retries: 10
+  delay: 30
 
 - import_tasks: import_image.yaml
   run_once: True
   delegate_to: "{{ groups['harbor'][0] }}"
+
+- import_tasks: import_charts.yaml
+  run_once: True
+  delegate_to: "{{ groups['harbor'][0] }}"
+  
