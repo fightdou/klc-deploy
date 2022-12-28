@@ -79,6 +79,8 @@
   vars:
     packages:
       - python3-pip
+      - python3-docker
+      - python3-libselinux
       - git
       - rsync
       - iptables
@@ -98,6 +100,8 @@
   vars:
     packages:
       - python3-pip
+      - python3-docker
+      - python3-libselinux
       - git
       - rsync
       - iptables
