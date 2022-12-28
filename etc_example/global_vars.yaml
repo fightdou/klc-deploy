@@ -73,14 +73,15 @@ docker_register_secrets_name: docker-register-secrets
 ######################
 harbor_local_username: admin
 harbor_local_password: Harbor12345
+haebor_local_image_version: v2.3.0
 harbor_local_charts_dir: /opt/offline/local-chart/
-harbor_image_version : arm 
-harbor_images: 
+harbor_local_push_images: 
   - mariadb
   - memcached
   - redis
   - rabbitmq
   - nginx
+harbor_local_push_image_version : arm 
 
 ####################
 # openpitrix options

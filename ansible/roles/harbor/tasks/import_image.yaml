@@ -1,36 +1,16 @@
 ---
-- name: check Docker config 
-  template:
-    src: docker-daemon.json.j2
-    dest: /etc/docker/daemon.json
-    owner: root
-    mode: 0644
-  register: configuration_result
-
-- name: reload daemon
-  systemd:
-    daemon_reload: yes
-
-- name: restart Docker
-  service:
-    name: docker
-    state: restarted
-    enabled: yes
-  when: 
-  - configuration_result.changed
-
 - name: Docker Login
   docker_login:
     registry: "{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002"
     username: "{{ harbor_local_username }}"
     debug: true
     password: "{{ harbor_local_password }}"
-  
+
 - name: Add tag to harbor image
   community.docker.docker_image:
-    name: "{{ kube_image_repository }}/{{ item }}:{{ harbor_image_version }}"  
-    repository: "{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002/library/{{ item }}:{{ harbor_image_version }}" 
+    name: "{{ kube_image_repository }}/{{ item }}:{{ harbor_local_push_image_version }}"  
+    repository: "{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002/library/{{ item }}:{{ harbor_local_push_image_version }}" 
     force_tag: yes 
     push: true
     source: local
-  with_items: "{{harbor_images}}"
+  with_items: "{{ harbor_local_push_images }}"
