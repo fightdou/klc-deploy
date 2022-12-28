@@ -431,7 +431,8 @@ nginx:
   #  requests:
   #    memory: 256Mi
   #    cpu: 100m
-  nodeSelector: {}
+  nodeSelector: 
+    {{ control_node_role_name }}: {{ node_role_value }}
   tolerations: []
   affinity: {}
   ## Additional deployment annotations
@@ -453,7 +454,8 @@ portal:
   #  requests:
   #    memory: 256Mi
   #    cpu: 100m
-  nodeSelector: {}
+  nodeSelector: 
+    {{ control_node_role_name }}: {{ node_role_value }}
   tolerations: []
   affinity: {}
   ## Additional deployment annotations
@@ -479,7 +481,8 @@ core:
   #  requests:
   #    memory: 256Mi
   #    cpu: 100m
-  nodeSelector: {}
+  nodeSelector: 
+    {{ control_node_role_name }}: {{ node_role_value }}
   tolerations: []
   affinity: {}
   ## Additional deployment annotations
@@ -529,7 +532,8 @@ jobservice:
   #   requests:
   #     memory: 256Mi
   #     cpu: 100m
-  nodeSelector: {}
+  nodeSelector: 
+    {{ control_node_role_name }}: {{ node_role_value }}
   tolerations: []
   affinity: {}
   ## Additional deployment annotations
@@ -565,7 +569,8 @@ registry:
     #    cpu: 100m
   replicas: 1
   revisionHistoryLimit: 10
-  nodeSelector: {}
+  nodeSelector: 
+    {{ control_node_role_name }}: {{ node_role_value }}
   tolerations: []
   affinity: {}
   ## Additional deployment annotations
@@ -624,7 +629,8 @@ chartmuseum:
   #  requests:
   #    memory: 256Mi
   #    cpu: 100m
-  nodeSelector: {}
+  nodeSelector: 
+    {{ control_node_role_name }}: {{ node_role_value }}
   tolerations: []
   affinity: {}
   ## Additional deployment annotations
@@ -699,7 +705,8 @@ trivy:
     limits:
       cpu: 1
       memory: 1Gi
-  nodeSelector: {}
+  nodeSelector: 
+    {{ control_node_role_name }}: {{ node_role_value }}
   tolerations: []
   affinity: {}
   ## Additional deployment annotations
@@ -722,7 +729,8 @@ notary:
     #  requests:
     #    memory: 256Mi
     #    cpu: 100m
-    nodeSelector: {}
+    nodeSelector: 
+      {{ control_node_role_name }}: {{ node_role_value }}
     tolerations: []
     affinity: {}
     ## Additional deployment annotations
@@ -742,7 +750,8 @@ notary:
     #  requests:
     #    memory: 256Mi
     #    cpu: 100m
-    nodeSelector: {}
+    nodeSelector: 
+      {{ control_node_role_name }}: {{ node_role_value }}
     tolerations: []
     affinity: {}
     ## Additional deployment annotations
@@ -779,7 +788,8 @@ database:
     #  requests:
     #    memory: 256Mi
     #    cpu: 100m
-    nodeSelector: {}
+    nodeSelector:
+      {{ control_node_role_name }}: {{ node_role_value }}
     tolerations: []
     affinity: {}
     ## The priority class to run the pod as
@@ -839,7 +849,8 @@ redis:
     #  requests:
     #    memory: 256Mi
     #    cpu: 100m
-    nodeSelector: {}
+    nodeSelector: 
+      {{ control_node_role_name }}: {{ node_role_value }}
     tolerations: []
     affinity: {}
     ## The priority class to run the pod as
@@ -878,7 +889,8 @@ exporter:
   image:
     repository: {{ kube_image_repository }}/harbor-exporter
     tag: v2.3.0
-  nodeSelector: {}
+  nodeSelector: 
+    {{ control_node_role_name }}: {{ node_role_value }}
   tolerations: []
   affinity: {}
   cacheDuration: 23

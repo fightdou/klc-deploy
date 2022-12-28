@@ -169,9 +169,9 @@ spec:
             cpu: 100m
             memory: 200Mi
         securityContext:
+          privileged: true
           readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 1000
+          runAsUser: 0
         volumeMounts:
         - mountPath: /tmp
           name: tmp-dir

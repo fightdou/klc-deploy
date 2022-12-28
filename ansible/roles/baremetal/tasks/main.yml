@@ -1,3 +1,13 @@
 ---
 - import_tasks: install_package.yaml
 
+- name: check kubernetes pool whether exists
+  shell: ceph osd pool ls | grep {{ kubernetes_pools_name }} | wc -l
+  register: kubernetes_pool
+
+- name: create kubernetes pool
+  shell: ceph osd pool create {{ kubernetes_pools_name }} {{ kubernetes_pg_num }} {{ kubernetes_pgp_num }}
+  run_once: true
+  ignore_errors: true
+  when: 
+    - kubernetes_pool.stdout == 0

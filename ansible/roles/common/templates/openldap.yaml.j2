@@ -64,6 +64,8 @@ spec:
                 operator: In
                 values:
                 - ""        
+      nodeSelector:
+        {{ control_node_role_name }}: {{ node_role_value }}
       volumes:
       - name: openldap-pvc
         persistentVolumeClaim:

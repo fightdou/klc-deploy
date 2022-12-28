@@ -7,17 +7,11 @@
     mode: 0644
   register: configuration_result
 
-- name: reload daemon
-  systemd:
-    daemon_reload: yes
-
-- name: restart Docker
-  service:
-    name: docker
-    state: restarted
-    enabled: yes
-  when: 
-  - configuration_result.changed
+- name: reload docker daemon
+  shell: "kill -SIGHUP $(pidof dockerd)"
+  args:
+    executable: /bin/bash
+  ignore_errors: true
 
 - name: Docker Login
   docker_login:
@@ -25,7 +19,7 @@
     username: "{{ harbor_local_username }}"
     debug: true
     password: "{{ harbor_local_password }}"
-  
+
 - name: Add tag to harbor image
   community.docker.docker_image:
     name: "{{ kube_image_repository }}/{{ item }}:{{ harbor_image_version }}"  

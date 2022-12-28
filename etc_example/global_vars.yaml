@@ -53,6 +53,18 @@ etcd_backup_expiry: "7"
 etcd_backup_dir: "/var/lib/etcd/backup"
 
 ##############
+# Ceph options
+##############
+fsid: 116d4de8-fd14-491f-811f-c1bdd8fac12a
+mons_secret:
+  client_admin:
+    client_admin_secret: AQAhettdAAAAABAAEER/quKJylhED6vQx7c8Vw==
+kubernetes_pools_name: kubernetes
+kubernetes_pg_num: 32
+kubernetes_pgp_num: 32
+cephfs_data_pools_name: cephfs_data
+
+##############
 # Helm options
 ##############
 helm_install_namespace: default
@@ -82,12 +94,6 @@ harbor_images:
   - rabbitmq
   - nginx
 
-####################
-# openpitrix options
-####################
-harbor_chart_url: https://kungze.github.io/kolla-helm
-
-
 #####################
 # Kubernetes options
 #####################
@@ -95,7 +101,7 @@ persistence:
   storageClass: "general"
 authentication:
   jwtSecret: ""
-  adminPassword: ""
+  adminPassword: "Troila12#$"
 common:
   core:
     console:
