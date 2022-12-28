@@ -154,7 +154,7 @@ topology:
 storageClass:
   create: {{ create_rbd_storage_class }}
   name: {{ rbd_storage_class_name }}
-  annotations: {}
+  annotations: {storageclass.kubernetes.io/is-default-class: "true"}
   clusterID: {{ fsid }}
   dataPool: ""
   pool: "{{ osd_pools.kubernetes_pools.pool_name }}"
