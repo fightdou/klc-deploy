@@ -1,4 +1,4 @@
-enable_docker_register_domain_deploy: false
+enable_docker_register_domain_deploy: true
 
 ####################
 # Kubernetes options
