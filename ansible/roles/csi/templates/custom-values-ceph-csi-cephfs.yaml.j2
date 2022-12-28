@@ -145,7 +145,7 @@ storageClass:
   annotations: {}
   clusterID: {{ fsid }}
   fsName: {{ ceph_fs_name }}
-  pool: "{{ cephfs_pools.cephfs_data_pools.pool_name }}"
+  pool: "{{ cephfs_data_pools_name }}"
   fuseMountOptions: ""
   kernelMountOptions: ""
   mounter: ""

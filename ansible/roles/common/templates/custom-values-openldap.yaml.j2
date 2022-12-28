@@ -42,15 +42,8 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
-{% if common.openldap.nodeSelector is defined and common.openldap.nodeSelector is not none %}
-nodeSelector:
-  {{ common.openldap.nodeSelector | to_nice_yaml(indent=2) | indent(2) }}
-{% elif nodeSelector is defined and nodeSelector is not none %}
-nodeSelector:
-  {{ nodeSelector | to_nice_yaml(indent=2) | indent(2) }}
-{% else %}
-nodeSelector: {}
-{% endif %}
+nodeSelector: 
+  {{ control_node_role_name }}: {{ node_role_value }}
 {% if common.openldap.tolerations is defined and common.openldap.tolerations is not none %}
 tolerations:
   {{ common.openldap.tolerations | to_nice_yaml(indent=2) | indent(2) }}

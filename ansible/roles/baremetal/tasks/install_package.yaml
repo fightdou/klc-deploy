@@ -8,7 +8,7 @@
         {% set api_interface = hostvars[host]['api_interface'] %}
         {% if 'ansible_' + api_interface in hostvars[host] %}
         {% set hostnames = [hostvars[host]['ansible_nodename'], hostvars[host]['ansible_hostname']] %}
-        {% if enable_docker_register_domain_deploy and host == groups['baremetal'][0] %}
+        {% if host == groups['baremetal'][0] %}
         {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}  {{ docker_register_domain }} {{ kubernetes_domain_name }}
         {% else %}
         {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}
@@ -29,6 +29,13 @@
     dest: /opt/
     mode: "0755"
     remote_src: "yes"
+  delegate_to: "{{ groups['baremetal'][0] }}"
+
+- name: copy helm file to cni /usr/local/bin/
+  copy:
+    src: helm
+    dest: /usr/local/bin/
+    mode: "0755"
   delegate_to: "{{ groups['baremetal'][0] }}"
 
 - name: Update apt cache
