@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "image": {
+      "type": "object",
+      "title": "Image",
+      "form": true,
+      "required": [
+          "repository",
+          "tag"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "form": true,
+          "title": "repository"
+        },
+        "tag": {
+          "type": "string",
+          "form": true,
+          "title": "tag"
+        }
+      }
+    }
+  }
+}

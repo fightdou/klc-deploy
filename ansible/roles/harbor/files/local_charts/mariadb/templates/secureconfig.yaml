@@ -1,0 +1,22 @@
+{{- if include "mariadb.createSecureConfig" . }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "mariadb.fullname" . }}
+  labels:
+    {{- include "mariadb.labels" . | nindent 4 }}
+type: Opaque
+data:
+  {{- with .Values.settings }}
+  {{- if .rootPassword }}
+  MARIADB_ROOT_PASSWORD: {{ .rootPassword | b64enc }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.userDatabase }}
+  MARIADB_DATABASE: {{ required "Values: userDatabase.name is mandatory if userDatabase is specified." .name | b64enc }}
+  {{- if .user }}
+  MARIADB_USER: {{ .user | b64enc }}
+  MARIADB_PASSWORD: {{ required "Values: userDatabase.password is mandatory if userDatabase.user is specified." .password | b64enc }}
+  {{- end }}
+  {{- end }}
+{{- end }}

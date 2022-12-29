@@ -32,10 +32,21 @@
   when:
     - plugin_info.plugin_list | length == 0
 
+- name: copy local charts dir
+  copy:
+    src: "{{ item }}"
+    dest: "{{ helm_charts_dir }}/"
+  loop:
+    - "local_charts"
+
 - name: Find local chart
-  command: "ls {{harbor_local_charts_dir}}"
+  command: "ls {{ helm_charts_dir }}/local_charts"
   register: dir_out
 
+- name: replace repository in values.yaml
+  shell: "sed -i 's/kunlunyun/{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}/g' {{ helm_charts_dir }}/local_charts/{{ item }}/values.yaml "
+  with_items: "{{ dir_out.stdout_lines }}"
+
 - name: Push chart to harbor
-  shell: "helm cm-push {{harbor_local_charts_dir}}/{{ item }} harbor-chart-repo"
+  shell: "helm cm-push {{ helm_charts_dir }}/local_charts/{{ item }} harbor-chart-repo"
   with_items: "{{ dir_out.stdout_lines }}"

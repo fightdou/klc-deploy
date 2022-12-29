@@ -34,12 +34,14 @@
   args:
     executable: /bin/bash
   ignore_errors: true
-  
-- import_tasks: import_image.yaml
-  run_once: True
-  delegate_to: "{{ groups['harbor'][0] }}"
 
 - import_tasks: import_charts.yaml
   run_once: True
   delegate_to: "{{ groups['harbor'][0] }}"
+
+- import_tasks: import_image.yaml
+  run_once: True
+  delegate_to: "{{ groups['harbor'][0] }}"
+
+
   

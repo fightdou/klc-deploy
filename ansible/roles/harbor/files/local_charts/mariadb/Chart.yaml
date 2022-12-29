@@ -1,0 +1,8 @@
+apiVersion: v2
+appVersion: 10.10.2
+description: A Helm chart for MariaDB on Kubernetes
+maintainers:
+- name: kunlunyun
+name: mariadb
+type: application
+version: 0.7.0
