@@ -5,16 +5,16 @@
 # ceph 有ssd时: bcache_map_list=[{'cache':'/dev/nvme0n1','data':'/dev/sda /dev/sdb /dev/sdc'},{'cache':'/dev/nvme1n1','data':'/dev/sdb /dev/sdc /dev/sdd'}]
 # 如果后端存储为lvm：配置为 lvm_pv_device="['/dev/sdb', '/dev/sdc']"
 [allnodes]
-172.27.136.73 ansible_ssh_user="root" ansible_ssh_pass="Troila12#$" hostname=dd1 api_interface=ens1 ceph_public_interface=ens1 ceph_cluster_interface=ens1 
+172.27.136.207 ansible_ssh_user="root" ansible_ssh_pass="Troila12#$" hostname=dd1 api_interface=enp125s0f0 ceph_public_interface=enp125s0f0 ceph_cluster_interface=enp125s0f0 
 
 [control]
-172.27.136.73
+172.27.136.207
 
 [compute]
-172.27.136.73
+172.27.136.207
 
 [storage]
-172.27.136.73
+172.27.136.207
 
 [ceph:children]
 ceph-mons
@@ -38,6 +38,9 @@ kube-master
 kube-worker
 new-master
 new-worker
+control
+compute
+storage
 
 [ceph-csi:children]
 control
@@ -65,4 +68,3 @@ control
 
 [harbor:children]
 control
-

@@ -157,7 +157,7 @@ storageClass:
   annotations: {storageclass.kubernetes.io/is-default-class: "true"}
   clusterID: {{ fsid }}
   dataPool: ""
-  pool: "{{ osd_pools.kubernetes_pools.pool_name }}"
+  pool: "{{ kubernetes_pools_name }}"
   imageFeatures: "layering"
   tryOtherMounters: false
   mounter: ""

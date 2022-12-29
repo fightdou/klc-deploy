@@ -14,15 +14,8 @@ controllermanager:
 {% else %}
   commonAffinity: {}
 {% endif %}
-{% if multicluster.nodeSelector is defined and multicluster.nodeSelector is not none %}
   commonNodeSelector:
-    {{ multicluster.nodeSelector | to_nice_yaml(indent=2) | indent(4) }}
-{% elif nodeSelector is defined and nodeSelector is not none %}
-  commonNodeSelector:
-    {{ nodeSelector | to_nice_yaml(indent=2) | indent(4) }}
-{% else %}
-  commonNodeSelector: {}
-{% endif %}
+    {{ control_node_role_name }}: {{ node_role_value }}
 {% if multicluster.tolerations is defined and multicluster.tolerations is not none %}
   commonTolerations:
     {{ multicluster.tolerations | to_nice_yaml(indent=2) | indent(4) }}
