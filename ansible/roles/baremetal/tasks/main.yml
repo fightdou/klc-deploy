@@ -10,4 +10,4 @@
   run_once: true
   ignore_errors: true
   when: 
-    - kubernetes_pool.stdout == 0
+    - kubernetes_pool.stdout == "0"

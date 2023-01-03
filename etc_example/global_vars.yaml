@@ -1,4 +1,4 @@
-enable_docker_register_domain_deploy: false
+enable_docker_register_domain_deploy: true
 docker_register_domain: 172.18.28.6
 docker_register_port: 5002
 
@@ -10,7 +10,7 @@ kubernetes_domain_name: kunlun.cluster.local
 # k8s 集群 VIP 端口
 kube_apiserver_port: 6443
 # docker 镜像 namespace
-kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubeshpere"
+kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/klc-deploy"
 # docker 镜像 tag
 kube_image_tag: latest
 kubernetes_version: 1.23.5
@@ -51,7 +51,7 @@ etcd_backup_dir: "/var/lib/etcd/backup"
 ##############
 # Ceph options
 ##############
-fsid: 116d4de8-fd14-491f-811f-c1bdd8fac173
+fsid: 116d4de8-fd14-491f-811f-c1bdd8fac12a
 mons_secret:
   client_admin:
     client_admin_secret: AQAhettdAAAAABAAEER/quKJylhED6vQx7c8Vw==
@@ -73,7 +73,7 @@ helm_wait_timeout: 600s
 enable_docker_auth: "{% if enable_docker_register_domain_deploy %}false{% else %}true{% endif %}"
 harbor_username: admin
 harbor_password: Harbor12345
-harbor_address: "{{ docker_register_domain }}"
+harbor_address: "172.18.28.6"
 docker_register_secrets_name: "{% if enable_docker_register_domain_deploy %}{% else %}docker-register-secrets{% endif %}"
 
 ######################

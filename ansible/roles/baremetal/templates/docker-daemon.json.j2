@@ -4,9 +4,12 @@
     "https://8xpk5wnt.mirror.aliyuncs.com"
   ],
   "insecure-registries": [
-    "{{ docker_register_domain }}:{{ docker_register_port }}",
+    {%- if enable_docker_register_domain_deploy %}
+    "{{ docker_register_domain }}:{{ docker_register_port }}" 
+    {% else %}
     "{{ harbor_address }}"
-  ],
+    {% endif %}
+],
   "max-concurrent-downloads": 10,
   "log-driver": "json-file",
   "log-level": "warn",

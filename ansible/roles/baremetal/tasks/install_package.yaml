@@ -92,7 +92,6 @@
       - rsync
       - iptables
       - sg3-utils-udev
-      - ntp
       - jq
       - ipvsadm
       - ipmitool
@@ -112,7 +111,6 @@
       - git
       - rsync
       - iptables
-      - ntp
       - jq
       - ipvsadm
       - ipmitool
