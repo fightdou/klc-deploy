@@ -1,18 +1,4 @@
 ---
-- name: check Docker config 
-  template:
-    src: docker-daemon.json.j2
-    dest: /etc/docker/daemon.json
-    owner: root
-    mode: 0644
-  register: configuration_result
-
-- name: reload docker daemon
-  shell: "kill -SIGHUP $(pidof dockerd)"
-  args:
-    executable: /bin/bash
-  ignore_errors: true
-
 - name: Docker Login
   docker_login:
     registry: "{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002"
@@ -20,11 +6,15 @@
     debug: true
     password: "{{ harbor_local_password }}"
 
+- name: Find local chart
+  command: "ls {{ helm_charts_dir }}/local_charts"
+  register: dir_out
+
 - name: Add tag to harbor image
   community.docker.docker_image:
-    name: "{{ kube_image_repository }}/{{ item }}:{{ harbor_image_version }}"  
-    repository: "{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002/library/{{ item }}:{{ harbor_image_version }}" 
+    name: "{{ kube_image_repository }}/{{ item }}:{{ harbor_local_chart_image_version }}"  
+    repository: "{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002/library/{{ item }}:arm" 
     force_tag: yes 
     push: true
     source: local
-  with_items: "{{harbor_images}}"
+  with_items: "{{ dir_out.stdout_lines }}"

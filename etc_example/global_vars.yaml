@@ -1,6 +1,6 @@
 enable_docker_register_domain_deploy: true
 docker_register_domain: 172.18.28.6
-docker_register_port: 80
+docker_register_port: 5002
 
 ####################
 # Kubernetes options
@@ -10,7 +10,7 @@ kubernetes_domain_name: kunlun.cluster.local
 # k8s 集群 VIP 端口
 kube_apiserver_port: 6443
 # docker 镜像 namespace
-kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubeshpere"
+kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/klc-deploy"
 # docker 镜像 tag
 kube_image_tag: latest
 kubernetes_version: 1.23.5
@@ -73,7 +73,7 @@ helm_wait_timeout: 600s
 enable_docker_auth: "{% if enable_docker_register_domain_deploy %}false{% else %}true{% endif %}"
 harbor_username: admin
 harbor_password: Harbor12345
-harbor_address: 172.18.28.6
+harbor_address: "172.18.28.6"
 docker_register_secrets_name: "{% if enable_docker_register_domain_deploy %}{% else %}docker-register-secrets{% endif %}"
 
 ######################
@@ -81,14 +81,8 @@ docker_register_secrets_name: "{% if enable_docker_register_domain_deploy %}{% e
 ######################
 harbor_local_username: admin
 harbor_local_password: Harbor12345
-harbor_local_charts_dir: /opt/offline/local-chart/
-harbor_image_version : arm 
-harbor_images: 
-  - mariadb
-  - memcached
-  - redis
-  - rabbitmq
-  - nginx
+haebor_local_image_version: v2.3.0
+harbor_local_chart_image_version : arm 
 
 #####################
 # Kubernetes options

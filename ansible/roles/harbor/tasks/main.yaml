@@ -21,11 +21,27 @@
   retries: 10
   delay: 30
 
-- import_tasks: import_image.yaml
-  run_once: True
-  delegate_to: "{{ groups['harbor'][0] }}"
+- name: check Docker config 
+  template:
+    src: docker-daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    mode: 0644
+  register: configuration_result
+
+- name: reload docker daemon
+  shell: "kill -SIGHUP $(pidof dockerd)"
+  args:
+    executable: /bin/bash
+  ignore_errors: true
 
 - import_tasks: import_charts.yaml
   run_once: True
   delegate_to: "{{ groups['harbor'][0] }}"
+
+- import_tasks: import_image.yaml
+  run_once: True
+  delegate_to: "{{ groups['harbor'][0] }}"
+
+
   

@@ -1,0 +1,13 @@
+annotations:
+  app.kubesphere.io/category: Message Queueing
+apiVersion: v1
+appVersion: 3.8.1
+description: RabbitMQ is the most widely deployed open source message broker. It supports
+  multiple messaging protocols.
+maintainers:
+- email: kunlunyun@troila.com
+  name: kunlunyun
+name: rabbitmq
+sources:
+- https://github.com/kubesphere/helm-charts/tree/master/src/test/rabbitmq
+version: 0.3.2

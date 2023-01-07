@@ -420,7 +420,7 @@ enableMigrateHelmHook: false
 nginx:
   image:
     repository: {{ kube_image_repository }}/nginx-photon
-    tag: v2.3.0
+    tag: {{ haebor_local_image_version }}
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   # mount the service account token
@@ -443,7 +443,7 @@ nginx:
 portal:
   image:
     repository: {{ kube_image_repository }}/harbor-portal
-    tag: v2.3.0
+    tag: {{ haebor_local_image_version }}
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   # mount the service account token
@@ -466,7 +466,7 @@ portal:
 core:
   image:
     repository: {{ kube_image_repository }}/harbor-core
-    tag: v2.3.0
+    tag: {{ haebor_local_image_version }}
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   # mount the service account token
@@ -512,7 +512,7 @@ core:
 jobservice:
   image:
     repository: {{ kube_image_repository }}/harbor-jobservice
-    tag: v2.3.0
+    tag: {{ haebor_local_image_version }}
   replicas: 1
   revisionHistoryLimit: 10
   # set the service account to be used, default if left empty
@@ -553,7 +553,7 @@ registry:
   registry:
     image:
       repository: {{ kube_image_repository }}/registry-photon
-      tag: v2.3.0
+      tag: {{ haebor_local_image_version }}
     # resources:
     #  requests:
     #    memory: 256Mi
@@ -561,7 +561,7 @@ registry:
   controller:
     image:
       repository: {{ kube_image_repository }}/harbor-registryctl
-      tag: v2.3.0
+      tag: {{ haebor_local_image_version }}
 
     # resources:
     #  requests:
@@ -622,7 +622,7 @@ chartmuseum:
   absoluteUrl: false
   image:
     repository: {{ kube_image_repository }}/chartmuseum-photon
-    tag: v2.3.0
+    tag: {{ haebor_local_image_version }}
   replicas: 1
   revisionHistoryLimit: 10
   # resources:
@@ -647,7 +647,7 @@ trivy:
     # repository the repository for Trivy adapter image
     repository: {{ kube_image_repository }}/trivy-adapter-photon
     # tag the tag for Trivy adapter image
-    tag: v2.3.0
+    tag: {{ haebor_local_image_version }}
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   # mount the service account token
@@ -723,7 +723,7 @@ notary:
     automountServiceAccountToken: false
     image:
       repository: {{ kube_image_repository }}/notary-server-photon
-      tag: v2.3.0
+      tag: {{ haebor_local_image_version }}
     replicas: 1
     # resources:
     #  requests:
@@ -744,7 +744,7 @@ notary:
     automountServiceAccountToken: false
     image:
       repository: {{ kube_image_repository }}/notary-signer-photon
-      tag: v2.3.0
+      tag: {{ haebor_local_image_version }}
     replicas: 1
     # resources:
     #  requests:
@@ -777,7 +777,7 @@ database:
     automountServiceAccountToken: false
     image:
       repository: {{ kube_image_repository }}/harbor-db
-      tag: v2.3.0
+      tag: {{ haebor_local_image_version }}
     # The initial superuser password for internal database
     password: "changeit"
     # The size limit for Shared memory, pgSQL use it for shared_buffer
@@ -844,7 +844,7 @@ redis:
     automountServiceAccountToken: false
     image:
       repository: {{ kube_image_repository }}/redis-photon
-      tag: v2.3.0
+      tag: {{ haebor_local_image_version }}
     # resources:
     #  requests:
     #    memory: 256Mi
@@ -888,7 +888,7 @@ exporter:
   automountServiceAccountToken: false
   image:
     repository: {{ kube_image_repository }}/harbor-exporter
-    tag: v2.3.0
+    tag: {{ haebor_local_image_version }}
   nodeSelector: 
     {{ control_node_role_name }}: {{ node_role_value }}
   tolerations: []

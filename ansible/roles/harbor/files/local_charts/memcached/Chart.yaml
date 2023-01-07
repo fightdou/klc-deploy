@@ -1,0 +1,15 @@
+apiVersion: v1
+appVersion: 1.5.20
+description: Free & open source, high-performance, distributed memory object caching
+  system.
+home: http://memcached.org/
+keywords:
+- memcached
+- cache
+maintainers:
+- email: kunlunyun@troila.com
+  name: kunlunyun
+name: memcached
+sources:
+- https://github.com/docker-library/memcached
+version: 3.2.5
