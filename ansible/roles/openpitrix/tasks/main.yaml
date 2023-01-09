@@ -17,9 +17,9 @@
     dest: "/etc/kubernetes/plugins/openpitrix/builtin-repo.yaml"
   delegate_to: "{{ groups['kube-master'][0] }}"
 
-# - name: OpenPitrix | Import App
-#   shell: kubectl apply -f /etc/kubernetes/plugins/openpitrix/ks-openpitrix-import.yaml
-#   delegate_to: "{{ groups['kube-master'][0] }}"
+- name: OpenPitrix | Import App
+  shell: kubectl apply -f /etc/kubernetes/plugins/openpitrix/ks-openpitrix-import.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: OpenPitrix | Check whether builtin repo exists
   shell: kubectl get hrepo builtin-stable -oname
