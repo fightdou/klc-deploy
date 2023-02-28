@@ -63,6 +63,18 @@ update_global() {
     sed -i "/^fsid/cfsid: ${fsid}" /etc/kolla/klc-global.yaml
 }
 
+update_repo() {
+    cp ${script_dir}/ansible/roles/baremetal/files/rpms/* /var/www/html/rpms/
+    yum install createrepo -y >/dev/null
+    createrepo -d /var/www/html/rpms 
+    yum clean all >/dev/null
+    yum update >/dev/null
+
+}
+
 parse_params "$@"
 load_images
 update_global
+update_repo
+
+echo "准备完成！"
