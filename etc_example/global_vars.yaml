@@ -133,7 +133,7 @@ enable_ceph: true
 enable_common: true
 enable_kubesphere: true
 enable_monitor: true
-enable_openpitrix: true
+enable_openpitrix: false
 enable_multicluster: true
 enable_harbor: true
 
