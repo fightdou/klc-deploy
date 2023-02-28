@@ -4,6 +4,7 @@
     path: "{{ helm_charts_dir }}"
     state: directory
     mode: 0755
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Getting installation init files
@@ -12,6 +13,7 @@
     dest: "{{ helm_charts_dir }}/"
   loop:
     - "jwt-script"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 # https://tools.ietf.org/html/rfc7518#section-3.2
@@ -20,6 +22,7 @@
   shell: >
     dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64 | tr -d "=+/" | tr -d '\n' | dd bs=32 count=1 2>/dev/null
   register: ks_secret
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 
@@ -28,6 +31,7 @@
     ks_secret_str: "{{ ks_secret.stdout }}"
   when:
     - (authentication is not defined and authentication.jwtSecret is not defined) or authentication.jwtSecret == ""
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 
@@ -36,23 +40,27 @@
     ks_secret_str: "{{ authentication.jwtSecret }}"
   when:
     - authentication is defined and authentication.jwtSecret is defined and authentication.jwtSecret != ""
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Enabling Token Script
   file:
     path: "{{ helm_charts_dir }}/jwt-script/jwt.sh"
     mode: 0755
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Getting KubeSphere Token
   shell: >
     /bin/bash {{ helm_charts_dir }}/jwt-script/jwt.sh  {{ ks_secret_str }} '{"email": "admin@troila.io","username": "admin","token_type": "static_token"}'
   register: ks_token
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Checking KubeSphere secrets
   shell: kubectl get secrets -n {{ helm_install_namespace }}
   register: kubesphere_secrets
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Deleting KubeSphere secret
@@ -61,6 +69,7 @@
   when:
     - kubesphere_secrets.stdout.find("kubesphere-secret") != -1
     - authentication is defined and authentication.jwtSecret is defined and authentication.jwtSecret != ""
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Creating components token
@@ -70,4 +79,5 @@
     -n {{ helm_install_namespace }}
   register: secret_status
   failed_when: "secret_status.stderr and 'already exists' not in secret_status.stderr"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"

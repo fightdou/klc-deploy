@@ -4,6 +4,7 @@
     kubectl get deploy -n default ks-account
   register: check_account
   failed_when: "check_account.stderr and 'NotFound' not in check_account.stderr"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Checking core components (2)
@@ -11,6 +12,7 @@
     kubectl get deploy -n default ks-apigateway
   register: check_apigateway
   failed_when: "check_apigateway.stderr and 'NotFound' not in check_apigateway.stderr"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Checking core components (3)
@@ -18,6 +20,7 @@
     kubectl get deploy -n default ks-account -o jsonpath='{.spec.replicas}'
   register: check_account_replicas
   failed_when: "check_account_replicas.stderr and 'NotFound' not in check_account_replicas.stderr"
+  run_once: true
   when:
     - check_account.rc == 0
   delegate_to: "{{ groups['kube-master'][0] }}"
@@ -29,6 +32,7 @@
   failed_when: "check_apigateway_replicas.stderr and 'NotFound' not in check_apigateway_replicas.stderr"
   when:
     - check_apigateway.rc == 0
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - block:
@@ -54,6 +58,7 @@
     - "'NotFound' not in check_apigateway.stderr"
     - "'NotFound' not in check_account_replicas.stderr"
     - "'NotFound' not in check_apigateway_replicas.stderr"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Creating KubeSphere directory
@@ -61,6 +66,7 @@
     path: "{{ helm_charts_dir }}"
     state: directory
     mode: 0755
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Getting installation init files
@@ -69,6 +75,7 @@
     dest: "{{ helm_charts_dir }}/"
   loop:
     - "ks-init"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Initing KubeSphere
@@ -77,6 +84,7 @@
     - "role-templates.yaml"
   register: init_ks_result
   failed_when: "init_ks_result.stderr and 'already exists' not in init_ks_result.stderr and 'Warning' not in init_ks_result.stderr"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Generating kubeconfig-admin
@@ -84,5 +92,5 @@
     /bin/bash {{ helm_charts_dir }}/ks-init/generate-kubeconfig.sh
   when:
     - openpitrix.enabled is defined and openpitrix.enabled
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
-  

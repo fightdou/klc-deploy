@@ -43,5 +43,6 @@
   run_once: True
   delegate_to: "{{ groups['harbor'][0] }}"
 
-
-  
+- import_tasks: harbor_secret.yaml
+  run_once: True
+  delegate_to: "{{ groups['harbor'][0] }}"

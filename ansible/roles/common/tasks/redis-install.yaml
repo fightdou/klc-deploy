@@ -50,14 +50,13 @@
         -f {{ helm_charts_dir }}/custom-values-redis.yaml
         --set fullnameOverride=redis-ha
         --namespace default
-
   when:
     - common.redis.enableHA is defined and common.redis.enableHA
 
 
 - name: KubeSphere | Deploying redis
   shell: >
-    kubectl -n default apply -f {{ helm_charts_dir }}/common/{{ item }}
+    kubectl -n default apply -f /etc/kubernetes/plugins/common/redis.yaml
   loop:
     - "redis.yaml"
   register: redis_result

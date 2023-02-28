@@ -3,6 +3,7 @@
   set_fact:
     kube_version: "{{ kubernetes_version }}"
   failed_when: false
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 
@@ -10,12 +11,14 @@
   shell: kubectl get node | awk '{if(NR>1){print $3}}' | grep master |wc -l
   register: masters
   failed_when: false
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Setting master num
   set_fact:
     master_num: "{{ masters.stdout }}"
   failed_when: false
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Override master num
@@ -25,6 +28,7 @@
   when:
     - master_num is defined and (master_num == "1" or master_num == "0")
     - enableHA is defined and enableHA
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Setting enableHA
@@ -33,16 +37,19 @@
       {% if masters is defined and masters.stdout is defined and masters.stdout != "0" and masters.stdout != "1" %}true{% else %}false{% endif %}
   when:
     - enableHA is not defined
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Checking ks-core Helm Release
   shell: kubectl -n {{ helm_install_namespace }} get secrets --field-selector=type=helm.sh/release.v1  | grep ks-core |wc -l
   register: helm_release
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Checking ks-core Exsit
   shell: kubectl get crd users.iam.kubesphere.io  | grep users.iam.kubesphere.io |wc -l
   register: ks_crds
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Convert ks-core to helm mananged
@@ -78,6 +85,7 @@
   when:
     - helm_release.stdout == "0" and ks_crds.stdout != "0"
   register: source_state
+  run_once: true
   failed_when: "source_state.stderr and 'NotFound' not in source_state.stderr"
   delegate_to: "{{ groups['kube-master'][0] }}"
 
@@ -86,6 +94,7 @@
   when:
     - ks_crds.stdout != "0"
   failed_when: false
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Getting ks-core helm charts
@@ -94,12 +103,14 @@
     dest: "{{ helm_charts_dir }}/"
   loop:
     - "ks-core"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 
 - name: KubeSphere | Checking KubeSphere Admin User
   shell: kubectl get user.iam.kubesphere.io admin --no-headers | wc -l
   register: kubesphere_admin_user
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Generate init admin password
@@ -119,15 +130,18 @@
         - adminPassword != ""
   when:
     - kubesphere_admin_user.stdout != "1"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: 创建 ks-core 目录
+  run_once: true
   file:
     name: /etc/kubernetes/plugins/ks-core
     state: directory
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Creating manifests
+  run_once: true
   template:
     src: "custom-values-ks-core.yaml.j2"
     dest: "/etc/kubernetes/plugins/ks-core/custom-values-ks-core.yaml"
@@ -136,6 +150,7 @@
 
 - name: KubeSphere | Upgrade CRDs
   shell: "kubectl apply -f {{ item }}"
+  run_once: true
   ignore_errors: false
   with_fileglob:
     - "{{ helm_charts_dir }}/ks-core/crds/*"
@@ -146,17 +161,20 @@
     {{ helm_charts_dir }}/ks-core/
     -f /etc/kubernetes/plugins/ks-core/custom-values-ks-core.yaml
     --namespace "{{ helm_install_namespace }}"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Creating manifests
   template:
     src: "ks-upgrade.yaml.j2"
     dest: "/etc/kubernetes/plugins/ks-core/ks-upgrade.yaml"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Kubesphere | Checking Users Manger and Workspaces Manger
   shell: kubectl get globalroles.iam.kubesphere.io users-manager workspaces-manager --no-headers | wc -l
   register: manager_result
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Kubesphere | Checking migration job
@@ -164,10 +182,12 @@
   when:
     - manager_result.stdout != "0"
   failed_when: false
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Creating migration job
   shell: kubectl apply -f /etc/kubernetes/plugins/ks-core/ks-upgrade.yaml
   when:
     - manager_result.stdout != "0"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"

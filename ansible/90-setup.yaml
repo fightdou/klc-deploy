@@ -83,7 +83,7 @@
   roles:
     - { role: ks-core/config,
         tags: config,
-        when: enable_openpitrix| bool }
+        when: enable_kubesphere | bool }
 
 - name: Apply role ks-multicluster
   gather_facts: false

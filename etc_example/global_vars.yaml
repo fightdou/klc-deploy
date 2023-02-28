@@ -15,7 +15,7 @@ kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/
 kube_image_tag: latest
 kubernetes_version: 1.23.5
 kubelet_cgroup_driver: systemd
-kube_proxy_mode: ipvs
+kube_proxy_mode: iptables
 kube_resolve_file: /etc/resolv.conf
 kubelet_root_dir: "/var/lib/kubelet"
 wait_plugins_ready: false

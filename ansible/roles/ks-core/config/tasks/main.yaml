@@ -76,9 +76,13 @@
   template:
     src: "kubesphere-config.yaml.j2"
     dest: "/etc/kubernetes/plugins/ks-core/kubesphere-config.yaml"
+  run_once: true
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 
 - name: KubeSphere | Initing KubeSphere
   shell: "kubectl apply -f /etc/kubernetes/plugins/ks-core/kubesphere-config.yaml"
+  run_once: true
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - import_tasks: ks-restart.yaml

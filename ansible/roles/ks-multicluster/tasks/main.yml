@@ -3,6 +3,7 @@
   file:
     name: /etc/kubernetes/plugins/kubefed
     state: directory
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: 复制 kubefed charts 目录
@@ -11,18 +12,21 @@
     dest: "{{ helm_charts_dir }}/"
   loop:
     - "kubefed"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Kubefed | Creating custom-values-kubefed.yaml
   template:
     src: "custom-values-kubefed.yaml.j2"
     dest: /etc/kubernetes/plugins/kubefed/custom-values-kubefed.yaml
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Kubefed | Creating tower.yaml
   template:
     src: "tower.yaml.j2"
     dest: /etc/kubernetes/plugins/kubefed/tower.yaml
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - block:
@@ -46,9 +50,11 @@
 
     - name: Kubfed | Labeling default namespace
       shell: kubectl label namespace {{ helm_install_namespace }} kubesphere.io/workspace=system-workspace --overwrite
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Kubefed | Creating MultiCluster crds
   shell: "kubectl apply -f {{ helm_charts_dir }}/kubefed/federatedcrds/ -n {{ helm_install_namespace }}"
   ignore_errors: true
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"

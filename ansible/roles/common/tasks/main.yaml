@@ -6,6 +6,7 @@
   file:
     name: /etc/kubernetes/plugins/common
     state: directory
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Getting Kubernetes master num
@@ -13,6 +14,7 @@
     kubectl get node | awk '{if(NR>1){print $3}}' | grep master | wc -l
   register: masters
   failed_when: false
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Setting master num
@@ -21,6 +23,7 @@
       {% if masters is defined and masters.stdout is defined and masters.stdout != "0" and masters.stdout != "1" %}true{% else %}false{% endif %}
   when:
     - enableHA is not defined
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Getting common component installation files
@@ -29,6 +32,7 @@
     dest: "{{ helm_charts_dir }}/"
   loop:
     - "common"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Deploying snapshot controller
@@ -57,13 +61,17 @@
         -f /etc/kubernetes/plugins/common/custom-values-snapshot-controller.yaml
         --namespace kube-system
       failed_when: false
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: KubeSphere | Creating common component manifests
+  run_once: true
   template:
     src: "redis.yaml.j2"
     dest: "/etc/kubernetes/plugins/common/redis.yaml"
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - import_tasks: common-install.yaml
+  run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"

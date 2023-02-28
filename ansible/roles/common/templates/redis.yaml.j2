@@ -99,8 +99,8 @@ spec:
                 values:
                 - ""
 {% endif %}
-nodeSelector: 
-  {{ control_node_role_name }}: {{ node_role_value }}
+      nodeSelector: 
+        {{ control_node_role_name }}: {{ node_role_value }}
 {% if common.redis.tolerations is defined and common.redis.tolerations is not none %}
       tolerations:
         {{ common.redis.tolerations | to_nice_yaml(indent=2) | indent(8) }}
