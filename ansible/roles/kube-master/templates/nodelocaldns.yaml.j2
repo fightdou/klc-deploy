@@ -129,6 +129,7 @@ spec:
       containers:
       - name: node-cache
         image: {{ kube_image_repository }}/k8s-dns-node-cache:{{ kube_image_tag }}
+        imagePullPolicy: IfNotPresent
         resources:
           requests:
             cpu: 25m
