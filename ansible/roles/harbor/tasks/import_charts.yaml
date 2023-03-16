@@ -8,29 +8,17 @@
     repo_username: "{{ harbor_local_username }}"
     repo_password: "{{ harbor_local_password }}"
     repo_url: "http://{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002/chartrepo/library"
-
-- name: Gather Helm plugin info
-  kubernetes.core.helm_plugin_info:
-    plugin_name: cm-push
-  run_once: True
-  register: plugin_info
-
-- block:
-  - name: install helm plugin cm-push
-    get_url: 
-      url: https://github.com/chartmuseum/helm-push/releases/download/v0.10.3/helm-push_0.10.3_linux_arm64.tar.gz
-      dest: /root/
-      mode: 0644
-      force: yes	
-    
-  - name: unarchive cm-push file
-    unarchive:
-      src: /root/helm-push_0.10.3_linux_arm64.tar.gz
-      dest: /root/.local/share/helm/plugins/
-
-  run_once: True
   when:
-    - plugin_info.plugin_list | length == 0
+    - ansible_distribution == "openEuler"
+
+- name: Add stable chart repo
+  vars:
+    repo_username: "{{ harbor_local_username }}"
+    repo_password: "{{ harbor_local_password }}"
+    repo_url: "http://{{ hostvars[groups['harbor'][0]]['ansible_' + hostvars[groups['harbor'][0]]['api_interface']]['ipv4']['address'] }}:30002/chartrepo/library"
+  shell: 'helm repo add harbor-chart-repo "{{ repo_url }}" --username "{{ repo_username }}" --password "{{ repo_password }}" '
+  when:
+    - ansible_distribution != "openEuler"
 
 - name: copy local charts dir
   copy:
