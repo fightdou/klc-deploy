@@ -29,4 +29,10 @@
     wait: yes
     wait_timeout: "{{ helm_wait_timeout }}"
     release_namespace: "{{ helm_install_namespace }}"
+  when:
+    - ansible_distribution == "openEuler"
 
+- name: Install harbor helm charts
+  shell: helm upgrade -i harbor {{ helm_charts_dir }}/harbor -f /etc/kubernetes/plugins/harbor/harbor.yaml
+  when:
+    - ansible_distribution != "openEuler"

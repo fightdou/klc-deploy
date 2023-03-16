@@ -28,3 +28,5 @@
     wait: yes
     wait_timeout: "{{ helm_wait_timeout }}"
     release_namespace: "{{ helm_install_namespace }}"
+  when:
+    - ansible_distribution == "openEuler"

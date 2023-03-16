@@ -28,3 +28,10 @@
     wait: yes
     wait_timeout: "{{ helm_wait_timeout }}"
     release_namespace: "{{ helm_install_namespace }}"
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: Install ceph-csi-cephfs helm charts
+  shell: helm upgrade -i ceph-csi-cephfs {{ helm_charts_dir }}/ceph-csi-cephfs -f /etc/kubernetes/plugins/csi-cephfs/values.yaml
+  when:
+    - ansible_distribution != "openEuler"
